@@ -1,0 +1,37 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+	<bean id="registrationDao" class="com.coderszone.guest.dao.impl.RegistrationDaoImpl">
+		<property name="dataSource" ref="dataSource" />
+		<property name="getUserByUserId" value="SELECT * FROM codersdb.user where user_name=?" />
+		<property name="createNewUser"	value="INSERT INTO codersdb.user (user_name, password, name, created_by, created_date, mod_by, mod_date, verification_key) VALUES (?, ?, ?, ?, ?, ?, ?, ?);" />
+		<property name="getUserById" value="SELECT * FROM codersdb.user where id= ?;" />
+		<property name="updateUserAsVerified" value="UPDATE codersdb.user SET verified=? WHERE id=?;" />
+		<property name="insertUserRole" value="INSERT INTO codersdb.user_role_map (user_id, role_id, mod_by, mod_date) VALUES (?, ?, ?, ?);"/>
+	</bean>
+	
+	<bean id="blogDao" class="com.coderszone.blog.dao.impl.BlogDaoImpl">
+		<property name="dataSource" ref="dataSource" />
+		<property name="getTagIdMap" value="SELECT * FROM codersdb.tags;" />
+		<property name="insertTagBlogMap"	value="INSERT INTO codersdb.blog_tags_map (blog_id , tag_id) VALUES (?, ?);" />
+		<property name="deleteTagBlogMap" value="DELETE FROM codersdb.blog_tags_map WHERE blog_id=?;" />
+		<property name="insertNewBlog" value="INSERT INTO codersdb.blog (keywords,title, description ,content, created_by, created_date, mod_by, mod_date) VALUES (?,?, ?, ?, ?, ?, ?, ?);" />
+		<property name="updateBlog" value="UPDATE codersdb.blog SET keywords=?, title=?, description=?, content=?, mod_by=?, mod_date=? WHERE id=?;"/>
+		<property name="getBlog" value="Select * from codersdb.blog where id=?;"/>
+		<property name="getBlogTags" value="SELECT t.name FROM codersdb.blog_tags_map btm 
+											LEFT JOIN codersdb.tags t ON btm.tag_id=t.id where btm.blog_id=? ;"/>
+		<property name="getAllTags" value="Select name from codersdb.tags;"/>
+		<property name="getAllBlogSizeByKeyword" value="SELECT count(*) FROM codersdb.blog where title like ? OR description like ? OR content like ? ;"/>
+		<property name="getAllBlogByKeyword" value="SELECT bl.*,t.name tagName FROM codersdb.blog bl left join codersdb.blog_tags_map btm ON bl.id=btm.blog_id
+														LEFT JOIN codersdb.tags t ON btm.tag_id=t.id where bl.title like ? OR bl.description like ? OR bl.content like ?  ORDER BY bl.mod_date DESC LIMIT ?,?;"/>
+		<property name="getAllBlogSize" value="SELECT count(*) FROM codersdb.blog;"/>
+		<property name="getAllBlog" value="SELECT bl.*,t.name tagName FROM codersdb.blog bl left join codersdb.blog_tags_map btm ON bl.id=btm.blog_id
+														LEFT JOIN codersdb.tags t ON btm.tag_id=t.id ORDER BY bl.mod_date DESC LIMIT ?,?;"/>
+		<property name="getAllBlogSizeByUserID" value="SELECT count(*) FROM codersdb.blog where created_by=?;"/>
+		<property name="getAllBlogByUSerID" value="SELECT bl.*,t.name tagName FROM codersdb.blog bl left join codersdb.blog_tags_map btm ON bl.id=btm.blog_id
+														LEFT JOIN codersdb.tags t ON btm.tag_id=t.id Where bl.created_by = ? ORDER BY bl.mod_date DESC LIMIT ?,?;"/>
+	</bean>
+
+</beans>

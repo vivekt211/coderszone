@@ -1,0 +1,257 @@
+*{
+	margin:0px;
+	padding:0px;
+}
+
+
+
+.item-fl{
+	display:block;
+	height:50px;
+	margin: 2px;
+}
+
+.item-fl .left{
+	display:inline-block;
+	margin: 2px;
+	float:left;
+	vertical-align: top;
+}
+
+.item-fl .right{
+	display:inline-block;
+	margin: 2px;
+	float:right;
+	vertical-align: top;
+}
+
+
+.bgpatti{
+	background: url("/service/resources/img/stripbg.jpg");
+	height:100px;
+	color:white; !important
+}
+
+.mrglogin{
+  top: 225px;
+}
+.item-ful{
+	display: block;
+    height: 80px;
+    padding: 20px;
+   }
+ .margin10{
+ margin:10px;
+ }
+ 
+ 
+ .lblwrt{
+ 	color:black;
+ }
+ 
+
+ 
+ 
+ .ht100{
+ 	height:100px;
+ }
+ 
+ .blank-bdy{
+ 	 height: 100%;
+    padding-top: 16%;
+    text-align: center;
+
+ }
+ /**NOTIFICATION**/
+.alert-error {
+	background: #79492C;
+	color: #F5D2D2;
+}
+
+.alert-info {
+	background: #375A67;
+	color: #F5D2D2;
+}
+
+.alert-success {
+	background: #3A6737;
+	color: #E4F1E2;
+}
+
+.alert .noti-left {
+	width: 50px;
+	margin: 0px auto;
+	display: inline-block;
+}
+
+.alert .noti-right {
+	display: inline-block;
+	float: right;
+	width: 243px;
+}
+
+.alert .noti-right .heading {
+	display: block;
+	color: #E2D8D8;
+	font-size: 17px;
+	font-weight: bold;
+}
+
+.alert .noti-right .msg {
+	display: block;
+}
+
+.error-icon {
+	background: url("/service/resources/img/error.png");
+	width: 50px;
+	height: 50px;
+	float: left;
+	background-size: 50px 50px;
+}
+
+.success-icon {
+	background: url("/service/resources/img/success.png");
+	width: 50px;
+	height: 50px;
+	float: left;
+	background-size: 50px 50px;
+}
+
+.info-icon {
+	background: url("/service/resources/img/info.png");
+	width: 50px;
+	height: 50px;
+	float: left;
+	background-size: 50px 50px;
+}
+
+.alert button.close {
+	position: absolute;
+	right: 7px;
+	top: 0px;
+}
+
+.fixed-pos{
+	position: fixed;
+    bottom: 0px;
+}
+
+.no-show{
+	display:none;
+}
+#uresult{
+    width: 200px;
+    height: 200px;
+    margin: auto;
+}
+#uresult img{
+    max-width: 200px;
+    max-height: 200px;
+}
+.upload-progress{
+	height:10px;
+}
+.upload-progress .upload-bar{
+	height:10px;
+	background-color: green;
+}
+
+.center{
+	text-align: center;
+}
+
+.searchres{
+	list-style: none;
+    margin: 0px 43px;
+    padding: 0px;
+}
+.searchres .search-li{
+	display: block;
+    border-bottom: 1px solid #ddd;
+    padding: 3px 0px;
+}
+
+
+/** comments ***/
+
+.comments-area{
+	width: 90%;
+    display: block;
+    position: absolute;
+    margin-left: 5%;
+    padding-bottom: 100px;
+}
+.comments-area .comments-sec{
+	display:block;
+	border:1px solid black;
+}
+.comments-area .comments-sec ul{
+	list-style: none;
+    display: block;
+    margin: 0px;
+    padding: 0px;
+}
+.comments-area .comments-sec ul li{
+	display: block;
+    float: left;
+    width: 100%;
+    background: none;
+}
+
+.comments-area .comments-sec .comment-bx{
+	display: block;
+    float: left;
+    width: 100%;
+    border-bottom: 1px solid #eee;
+}
+.comments-area .comments-sec .comment-bx .comment-hd{
+	display: block;
+    float: left;
+    font-size: 11px;
+    color: gray;
+    width: 100%;
+    padding: 5px;
+}
+
+.comments-area .comments-sec .comment-bx .comment-bdy{
+    display: block;
+    float: left;
+    font-size: 12px;
+    color: black;
+    width: 100%;
+    background: white;
+}
+.comments-area .comments-sec .comment-bx .comment-bdy *{
+    background: white;
+    border:0px;
+}
+
+.comments-area .comment-write{
+	display: block;
+    float: left;
+    width: 100%;
+    padding: 5px;
+    background: rgba(221, 221, 221, 0.39)
+}
+.comments-area .comment-write .write-hd{
+	display:block;
+	width:100%;
+}
+.comments-area .comment-write .write-hd .write-name{
+	display: block;
+    float: left;
+    width: 100%;
+}
+.comments-area .comment-write .write-hd .write-email{
+    display: block;
+    float: left;
+    width: 100%;
+}
+.comments-area .comment-write .write-hd .write-cont{
+	display:block;
+	width:100%;
+}
+textarea.comment{
+	width:100%;
+	height:100px;
+}

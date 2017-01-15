@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<Context path="/" reloadable="true" cachingAllowed="false" antiResourceLocking="true">
+
+<!-- Default set of monitored resources -->
+<WatchedResource>WEB-INF/web.xml</WatchedResource>
+
+
+<!--  Put below in server.xml in <GlobalNamingResources> </GlobalNamingResources> -->
+<Resource
+	  name="jdbc/codersDB"
+	  auth="Container"
+	  type="javax.sql.DataSource"
+	  factory="org.apache.tomcat.jdbc.pool.DataSourceFactory"
+	  initialSize="34"
+	  maxActive="377"
+	  maxIdle="233"
+	  minIdle="89"
+	  timeBetweenEvictionRunsMillis="34000"
+	  minEvictableIdleTimeMillis="55000"
+	  validationQuery="SELECT 1"
+	  validationInterval="34000"
+	  testOnBorrow="true"
+	  removeAbandoned="true"
+	  removeAbandonedTimeout="55"
+	  username="root"
+	  password="1q2w3e"
+	  driverClassName="com.mysql.jdbc.Driver"
+	  url="jdbc:mysql://localhost:3306/codersdb?allowMultiQueries=true"
+ />
+
+
+<!-- Put below in context.xml -->
+<ResourceLink name="jdbc/codersDB"
+                    global="jdbc/codersDB"
+                    auth="Container"
+                    type="javax.sql.DataSource" />
+
+</Context>

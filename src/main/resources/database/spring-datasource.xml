@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+     xmlns:context="http://www.springframework.org/schema/context"
+     xmlns:aop="http://www.springframework.org/schema/aop"
+     xmlns:tx="http://www.springframework.org/schema/tx"
+     xmlns:jdbc="http://www.springframework.org/schema/jdbc"
+     xsi:schemaLocation="
+     http://www.springframework.org/schema/beans 
+     http://www.springframework.org/schema/beans/spring-beans.xsd
+     http://www.springframework.org/schema/context 
+        http://www.springframework.org/schema/context/spring-context.xsd
+     http://www.springframework.org/schema/tx
+     http://www.springframework.org/schema/tx/spring-tx.xsd
+     http://www.springframework.org/schema/aop 
+     http://www.springframework.org/schema/aop/spring-aop.xsd
+     http://www.springframework.org/schema/jdbc
+     http://www.springframework.org/schema/jdbc/spring-jdbc.xsd">
+  
+  <!-- this is the service object that we want to make transactional -->
+  <!--  <bean id="fooService" class="x.y.service.DefaultFooService"/>-->
+  <!-- the transactional advice (what 'happens'; see the <aop:advisor/> bean below) -->
+<!-- <bean id="dataSource" class="org.springframework.jndi.JndiObjectFactoryBean">
+        <property name="jndiName" value="java:comp/env/jdbc/vypDB"/>
+    </bean> -->
+    <!-- Data source template for use in the connection pool. -->
+    
+     <bean id="dataSource" class="org.springframework.jndi.JndiObjectFactoryBean">
+        <property name="jndiName" value="java:comp/env/jdbc/codersDB"/>
+    </bean>
+    
+<!-- <bean id="dataSourceTemplate" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+    <property name="driverClassName" value="${jdbc.driver}" />
+    <property name="url" value="${jdbc.url}" />
+    <property name="username" value="${jdbc.username}" />
+    <property name="password" value="${jdbc.password}" />
+</bean>
+
+Connection pool as data source.
+<bean id="dataSource" class="org.apache.tomcat.jdbc.pool.DataSource" destroy-method="close">
+    Refer to a separately created bean as a data source template to work around a quirk of Tomcat's class loader.
+    <property name="dataSource" ref="dataSourceTemplate" />
+</bean> -->
+	<!-- <bean id="dataSource" destroy-method="close"  class="org.apache.commons.dbcp.BasicDataSource">
+    
+		<property name="driverClassName" value="${jdbc.driver}" />
+		<property name="url" value="${jdbc.url}" />
+		<property name="username" value="${jdbc.username}" />
+		<property name="password" value="${jdbc.password}" />
+		<property name="initialSize" value="200"/>
+	</bean> -->
+	<jdbc:initialize-database  data-source="dataSource" enabled="false">
+        <jdbc:script execution="INIT" location="classpath:org/springframework/batch/core/schema-mysql.sql" />
+    </jdbc:initialize-database>
+    
+	<bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+  		<property name="dataSource" ref="dataSource"/>
+	</bean>
+  
+	<bean class="org.springframework.jdbc.support.SQLExceptionSubclassTranslator"/>
+	<!-- <bean class="org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor"/> -->
+</beans>

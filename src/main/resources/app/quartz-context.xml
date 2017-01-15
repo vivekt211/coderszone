@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+                            http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+ 
+ 
+ 
+    <!-- For times when you just need to invoke a method on a specific object -->
+    <!-- <bean id="simpleJobDetail" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+        <property name="targetObject" ref="myBean" />
+        <property name="targetMethod" value="printMessage" />
+    </bean> -->
+ 
+ 
+    <!-- For times when you need more complex processing, passing data to the scheduled job 
+    <bean name="studentStopPopulatorJob"    class="org.springframework.scheduling.quartz.JobDetailFactoryBean" autowire="default">
+        <property name="jobClass" value="com.coderszone.common.job.StudentStopMsgListJob" />
+        <property name="durability" value="true" />
+    </bean>
+    <bean name="mailSenderJob"    class="org.springframework.scheduling.quartz.JobDetailFactoryBean" autowire="default">
+        <property name="jobClass" value="com.coderszone.common.job.MailSenderJob" />
+        <property name="durability" value="true" />
+    </bean>
+    <bean name="pushSenderJob"    class="org.springframework.scheduling.quartz.JobDetailFactoryBean" autowire="default">
+        <property name="jobClass" value="com.coderszone.common.job.PushSenderJob" />
+        <property name="durability" value="true" />
+    </bean>
+    <bean name="smsSenderJob"    class="org.springframework.scheduling.quartz.JobDetailFactoryBean" autowire="default">
+        <property name="jobClass" value="com.coderszone.common.job.SmsSenderJob" />
+        <property name="durability" value="true" />
+    </bean>
+ 	<bean name="geofencingJob"    class="org.springframework.scheduling.quartz.JobDetailFactoryBean" autowire="default">
+        <property name="jobClass" value="com.coderszone.common.job.GeofencingJob" />
+        <property name="durability" value="true" />
+    </bean>-->
+ 
+    <!-- Run the job every 2 seconds with initial delay of 1 second -->
+   <!--  <bean id="simpleTrigger"  class="org.springframework.scheduling.quartz.SimpleTriggerFactoryBean">
+        <property name="jobDetail" ref="simpleJobDetail" />
+        <property name="startDelay" value="1000" />
+        <property name="repeatInterval" value="5000" />
+    </bean> -->
+ 
+ 
+    <!-- Run the job every 5 seconds only on Weekends
+    <bean id="cronTriggerStudStop"  class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+        <property name="jobDetail" ref="studentStopPopulatorJob" />
+        <property name="cronExpression" value="0 0 0 * * ?" />
+    </bean>
+     <bean id="cronTriggerMail"  class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+        <property name="jobDetail" ref="mailSenderJob" />
+        <property name="cronExpression" value="0 0/1 * * * ?" />
+    </bean>
+ 	<bean id="cronTriggerSms"  class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+        <property name="jobDetail" ref="smsSenderJob" />
+        <property name="cronExpression" value="0 0/1 * * * ?" />
+    </bean>
+    <bean id="cronTriggerPush"  class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+        <property name="jobDetail" ref="pushSenderJob" />
+        <property name="cronExpression" value="0 0/1 * * * ?" />
+    </bean>
+    <bean id="cronTriggerFence"  class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+        <property name="jobDetail" ref="geofencingJob" />
+        <property name="cronExpression" value="0/20 * * * * ?" />
+    </bean> -->
+ 
+    <!-- Scheduler factory bean to glue together jobDetails and triggers to Configure Quartz Scheduler 
+    <bean  class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+   		 <property name="applicationContextSchedulerContextKey" value="applicationContext" />
+    
+        <property name="jobDetails">
+            <list>
+               <ref bean="studentStopPopulatorJob" />
+                <ref bean="mailSenderJob" />
+                <ref bean="pushSenderJob" />
+                <ref bean="smsSenderJob" />
+                <ref bean="geofencingJob" /> 
+            </list>
+        </property>
+ 
+        <property name="triggers">
+            <list>
+               <ref bean="cronTriggerStudStop" />
+                <ref bean="cronTriggerMail" />
+                <ref bean="cronTriggerSms" />
+                <ref bean="cronTriggerPush" />
+                <ref bean="cronTriggerFence" /> 
+            </list>
+        </property>
+    </bean> -->
+ 
+</beans>
