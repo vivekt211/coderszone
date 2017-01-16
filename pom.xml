@@ -53,6 +53,7 @@
 			<type>jar</type>
 			<scope>compile</scope>
 		</dependency>
+		<!-- jstl -->
 		<dependency>
 			<groupId>jstl</groupId>
 			<artifactId>jstl</artifactId>
