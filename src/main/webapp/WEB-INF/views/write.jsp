@@ -28,7 +28,8 @@
     <!-- Scripts -->
    <script src="/service/resources/base/js/jquery.js"></script> 
   <script src="/service/resources/base/js/bootstrap.js"></script> 
-   <script src="/service/resources/summernote/summernote.js"></script>
+  <link href="http://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.2/summernote.css" rel="stylesheet">
+  <script src="http://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.2/summernote.js"></script>
     <!--[if IE]>
       <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
     <![endif]-->
@@ -136,9 +137,37 @@
     <script src="/service/resources/base/js/functions.js"></script>
       
     <script type="text/javascript">
-      
+     
+	    function sendFile(file,editor,welEditable) {
+	        data = new FormData();
+	        data.append("file", file);
+	        console.log('image upload:', file, editor, welEditable);
+	        console.log(data);
+	        $.ajax({
+	            data: data,
+	            type: "POST",
+	            url: "/service/upfile/normupload",
+	            cache: false,
+	            contentType: false,
+				processData: false,
+	            success: function(url) {
+	               $('#summernote').summernote('editor.insertImage', url);
+	            },
+	            error:  function(jqXHR, textStatus, errorThrown)
+	            {
+	                // Handle errors here
+	               alert('ERRORS: ' + textStatus);
+	                // STOP LOADING SPINNER
+	            }
+	        });
+	      }
          $('#summernote').summernote({
-            height: 450   //set editable area's height
+            height: 450 ,//set editable area's height
+            callbacks : {
+	            onImageUpload: function(files, editor, welEditable) {
+	                sendFile(files[0],editor,welEditable);
+	            }
+            }
         });
          
         $("#postbtn").click(function(){

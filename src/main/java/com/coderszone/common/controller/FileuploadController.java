@@ -2,26 +2,31 @@ package com.coderszone.common.controller;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
+import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.net.URL;
-import java.net.URLConnection;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.Map;
+import java.util.Set;
 
 import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.HttpMessageNotWritableException;
@@ -31,10 +36,14 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
+import org.springframework.web.multipart.commons.CommonsMultipartFile;
 
 import com.coderszone.common.beans.FileMeta;
+import com.coderszone.common.exception.CommonServiceException;
 import com.coderszone.common.service.UploadService;
 
 @Controller
@@ -43,7 +52,19 @@ public class FileuploadController {
 	
 	@Value("${upload.path}")
 	private String imgpath;
+	@Value("${coderszone.context}")
+	private String rootContext;
+	
+	public String getRootContext() {
+		return rootContext;
+	}
+
+	public void setRootContext(String rootContext) {
+		this.rootContext = rootContext;
+	}
+
 	@Autowired
+	@Qualifier(value="uploadServiceLocalImpl")
 	private UploadService uploadService;
 
 	@RequestMapping(value = "/upload", method = RequestMethod.POST)
@@ -68,9 +89,16 @@ public class FileuploadController {
 			//while ((len = stream.read(buf)) > 0)
 			//	out.write(buf, 0, len);
 			byte[] bytes = IOUtils.toByteArray(stream);
-			String url=uploadService.uploadFileS3(fileMeta.getFileExt(), mpf.getContentType(), bytes);
-			System.out.println(url);
-			fileMeta.setFileName(url);
+			String url;
+			try {
+				url = uploadService.uploadFileS3(fileMeta.getFileExt(), mpf.getContentType(), bytes);
+				System.out.println(url);
+				fileMeta.setFileName(url);
+			} catch (CommonServiceException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
 			files.add(fileMeta);
 			for (; files.size() > 20; files.remove(0))
 				;
@@ -94,11 +122,25 @@ public class FileuploadController {
 			String contType=Files.probeContentType(source);
 			System.out.println(contType);
 			
-			String url=uploadService.getSignedUrl(base+"."+ext);
-			System.out.println("UR: "+url);
-			URI path=new URI(url);
-			System.out.println(path.getPath());
-			InputStream inputStream = path.toURL().openStream();
+			String url = null;
+			InputStream inputStream=null;
+			try {
+				url = uploadService.getSignedUrl(base+"."+ext);
+				if(url.contains("http://")){
+					//its a web url
+					System.out.println("URI: "+url);
+					URI path=new URI(url);
+					System.out.println(path.getPath());
+					inputStream = path.toURL().openStream();
+				}else{
+					//local File
+					System.out.println("URL: "+url);
+					inputStream= new FileInputStream(url);
+				}
+			} catch (CommonServiceException e) {
+				e.printStackTrace();
+			}
+			
 		       
 			//String contentType = URLConnection.guessContentTypeFromStream(inputStream);
 			//connection.connect();
@@ -123,7 +165,45 @@ public class FileuploadController {
 			e.printStackTrace();
 		}
 	}
-
+	
+	
+	@RequestMapping(value = "/normupload", method = RequestMethod.POST)
+	@ResponseBody
+	public String uploadNorm(MultipartHttpServletRequest request, HttpServletResponse response) throws IOException, FileUploadException {
+		System.out.println("Upload request recieved for normal");
+		LinkedList<FileMeta> files = new LinkedList<FileMeta>();
+		Iterator itr = request.getFileNames();
+		MultipartFile mpf = null;
+		FileMeta fileMeta = null;
+		String curl=rootContext;
+		if (itr.hasNext()) {
+			mpf = request.getFile((String) itr.next());
+			InputStream stream = mpf.getInputStream();
+			System.out.println((new StringBuilder(String.valueOf(mpf.getOriginalFilename()))).append(" uploaded! ").append(files.size()).toString());
+			fileMeta = new FileMeta();
+			fileMeta.setFileName(FilenameUtils.getBaseName(mpf.getOriginalFilename()));
+			fileMeta.setFileSize(mpf.getSize() / 1024L);
+			fileMeta.setFileType(mpf.getContentType());
+			fileMeta.setFileExt(FilenameUtils.getExtension(mpf.getOriginalFilename()));
+			byte[] bytes = IOUtils.toByteArray(stream);
+			String url;
+			try {
+				url = uploadService.uploadFileS3(fileMeta.getFileExt(), mpf.getContentType(), bytes);
+				System.out.println(url);
+				curl=curl+"service/upfile/get/"+url+"/"+fileMeta.getFileExt();
+				fileMeta.setFileName(url);
+			} catch (CommonServiceException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+			files.add(fileMeta);
+			
+		}
+		return curl;
+	}
+	
+	
 	public void setImgpath(String imgpath) {
 		this.imgpath = imgpath;
 	}

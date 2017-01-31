@@ -49,6 +49,7 @@
 		<intercept-url pattern="/service/main" access="hasAnyRole('ROLE_ADMIN','ROLE_SUPER_ADMIN','ROLE_BLOGGER')"/>
 		<intercept-url pattern="/service/upfile/*" access="hasAnyRole('ROLE_ADMIN','ROLE_SUPER_ADMIN','ROLE_BLOGGER')"/>
 		<intercept-url pattern="/service/maintainimg" access="hasAnyRole('ROLE_ADMIN','ROLE_SUPER_ADMIN','ROLE_BLOGGER')"/>
+	    <intercept-url pattern="/service/normupload" access="permitAll"/>
 	    </http>
 	    
 		<!-- <http pattern="/rest_api/**" create-session="stateless"  authentication-manager-ref="serviceCredsAuthMgr">

@@ -75,8 +75,8 @@ public class UploadServiceImpl implements UploadService {
 
 	public static void main(String[] args) {
 		try {
-			String awsAccessKey = "AKIAJ3ZSHEHKR4NEAZBA";
-			String awsSecretKey = "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";
+			String awsAccessKey = "xxxx";
+			String awsSecretKey = "xxaxaxa";
 			AWSCredentials awsCredentials = new AWSCredentials(awsAccessKey, awsSecretKey);
 			S3Service s3Service = new RestS3Service(awsCredentials);
 			// S3Bucket[] myBuckets = s3Service.listAllBuckets();
