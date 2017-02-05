@@ -3,6 +3,8 @@ package com.coderszone.blog.service;
 import java.util.List;
 
 import com.coderszone.blog.model.Blog;
+import com.coderszone.blog.model.Comment;
+import com.coderszone.blog.model.CommentParam;
 import com.coderszone.common.exception.DataBaseAccessException;
 import com.coderszone.common.pageutil.Page;
 
@@ -19,5 +21,9 @@ public interface BlogService {
 	Page<Blog> getAllBlogsBykeyWord(String keyword, int pageNo, int pageSize) throws DataBaseAccessException;
 
 	Page<Blog> getAllBlogsByUserId(String username, int pageNo, int pageSize) throws DataBaseAccessException;
+
+	List<Comment> getComments(int blogId)throws DataBaseAccessException;
+
+	Comment postComments(CommentParam commentParam) throws DataBaseAccessException;
 
 }

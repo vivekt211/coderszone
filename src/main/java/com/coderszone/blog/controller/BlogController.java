@@ -18,6 +18,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.coderszone.authentication.model.User;
 import com.coderszone.blog.model.Blog;
+import com.coderszone.blog.model.Comment;
+import com.coderszone.blog.model.CommentParam;
 import com.coderszone.blog.service.BlogService;
 import com.coderszone.common.Constants;
 import com.coderszone.common.DateUtil;
@@ -123,6 +125,46 @@ public class BlogController{
 		} catch (DataBaseAccessException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		}
+		return res;
+	}
+
+	@RequestMapping(value="/comments", method=RequestMethod.GET)
+	public @ResponseBody ResponseModel<List<Comment>> getComments(@RequestParam int id,Model model) {
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+		ResponseModel<List<Comment>> res=new ResponseModel<List<Comment>>();
+		try {
+			List<Comment> commentList=blogService.getComments(id);
+			res.setResponseCode(Constants.RESPONSE_OK);
+			res.setMessage("");
+			res.setData(commentList);
+		
+		} catch (DataBaseAccessException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			res.setResponseCode(Constants.RESPONSE_FAILED);
+			res.setMessage("There is database exception ");
+			res.setData(null);
+		}
+		return res;
+	}
+	
+	@RequestMapping(value="/postcomment", method=RequestMethod.POST)
+	public @ResponseBody ResponseModel<Comment> postComments(@ModelAttribute CommentParam commentParam,Model model) {
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+		ResponseModel<Comment> res=new ResponseModel<Comment>();
+		try {
+			Comment comment=blogService.postComments(commentParam);
+			res.setResponseCode(Constants.RESPONSE_OK);
+			res.setMessage("");
+			res.setData(comment);
+		
+		} catch (DataBaseAccessException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			res.setResponseCode(Constants.RESPONSE_FAILED);
+			res.setMessage("There is database exception ");
+			res.setData(null);
 		}
 		return res;
 	}

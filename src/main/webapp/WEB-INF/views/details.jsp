@@ -112,30 +112,22 @@
         </c:if>
       </div>
       </div>
+      
       <div class="comments-area">
+      <h3>Comments</h3>
        <div class="comments-sec">
         <ul>
-         <li>
-           <div class="comment-bx">
-              <div class="comment-hd">
-                vivek Kumar (vivekt211@bmc.com)|25 nov 2017
-              </div>
-              <div class="comment-bdy">
-               <pre> Hi !
-                 Thanks for this awesome portal.
-               </pre>
-              </div>
-           </div>
-         </li>
+         <!-- commens goes here -->
         </ul>
        </div>
-       <div class="comment-write">
+       <div class="comment-write" id="commentWrite">
           <div class="write-hd">
-             <div class="write-name"> Your Name : <input type="text" name="usrName"/> </div>
-             <div class="write-email"> Your Email : <input type="text" name="usrEmail"/> </div>
+             <div class="write-name"> Your Name : <input type="text" name="name" id="usrName" placeholder=" Enter Your Name"/> 
+       </div>
+             <div class="write-email"> Your Email : <input type="text" name="email" id="usrEmail" placeholder=" Enter Your Email"/> </div>
           </div>
           <div class="write-cont">
-            <textarea class="comment" name="comment" id="comment">
+            <textarea class="comment" name="content" id="comment" placeholder=" What is in your mind ?">
             </textarea>
           </div>
        </div>
@@ -165,6 +157,9 @@
     <script src="/service/resources/base/js/vendor/jquery.cookie.js"></script>
     <script src="/service/resources/base/js/style-switcher.js"></script>
     <script src="/service/resources/js/multiple-select.js"></script>
+    <script type="text/javascript" src="/service/resources/js/jquery.noty.packaged.js"></script>
+    <script type="text/javascript" src="/service/resources/js/notice.js"></script>
+  
       
    <script type="text/javascript">
     	$("#searchbtn").click(function(){
@@ -178,7 +173,101 @@
       });
         $("#postbtn").click(function(){
           	window.location.replace("${context_root}/service/getupdate?id="+$("#blogid").val());
-        }); 
+        });
+        
+    function loadComments(){
+    	
+    	$.ajax({
+            url: '/service/comments?id=' + $("#blogid").val(),
+            type: 'GET',
+            success: function(result) {
+              if (result.responseCode == 200) {
+            	  var ul=$(".comments-sec").find('ul');
+            	for(var i=0;i<result.data.length;i++){
+            		ul.append('<li>'+
+            		           '<div class="comment-bx">'+
+            		              '<div class="comment-hd">'+
+            		              result.data[i].name+'('+result.data[i].email+')|'+result.data[i].dateTime+
+            		              '</div>'+
+            		              '<div class="comment-bdy">'+
+            		               '<pre>'+
+            		               '</pre>'+
+            		              '</div>'+
+            		           '</div>'+
+            		         '</li>');
+            		ul.find('li:last-child').find(".comment-bdy pre").text(result.data[i].content);
+            		}
+            	notify('success',"Comments added successfully");
+                
+               // $("#registerBlock").hide();
+                //$("#verifyBlock").hide();
+               // $("#messageBlock").show();
+              } else {
+               // $("#verify-msg").html(result.message);
+               alert("na bhail")
+              }
+            }
+          });
+    }
+    function validComments(){
+    	var name=$("#usrName").val();
+    	var email=$("#usrEmail").val();
+    	var content=$("#comment").val();
+    	
+    	if(name.trim()=='' || email.trim()=='' || content.trim==''  ){
+    		notify("error","Fields cannot be empty, plese fill it");
+    		return false;
+    	}
+    	var re = '/\S+@\S+\.\S+/';
+        if (/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(email)) {
+          return true;
+        }else{
+          notify('error',"Please Enter a valid Email");
+          return false;
+        }
+    }
+    loadComments();
+    $("#postCommentbtn").click(function(){
+    	if(validComments()){
+    		postComment();
+    	}
+    })
+    function postComment(){
+    	notify("info",JSON.stringify($("#commentWrite").serialize()))
+    	var name=$("#usrName").val();
+    	var email=$("#usrEmail").val();
+    	var content=$("#comment").val();
+    	
+    	var dt={"name":name,"email":email,"content":content,"blogId":$("#blogid").val()};
+    	notify("info",JSON.stringify(dt));
+    	
+    	 $.ajax({
+             url: '/service/postcomment',
+             type: 'POST',
+             data: dt,
+             success: function(result) {
+               //var result1 = JSON.parse(result);
+               if (result.responseCode == 200) {
+            	   var ul=$(".comments-sec").find('ul');
+            	       ul.append('<li>'+
+        		           '<div class="comment-bx">'+
+        		              '<div class="comment-hd">'+
+        		              result.data.name+'('+result.data.email+')|'+result.data.dateTime+
+        		              '</div>'+
+        		              '<div class="comment-bdy">'+
+        		               '<pre>'+decodeURIComponent(result.data.content)+
+        		               '</pre>'+
+        		              '</div>'+
+        		           '</div>'+
+        		         '</li>');
+            	       notify("success","Comments added successfully");
+               	 } else {
+                 alert("pata na ");
+               }
+             }
+           });
+    }
+       
      </script>
   </body>
 

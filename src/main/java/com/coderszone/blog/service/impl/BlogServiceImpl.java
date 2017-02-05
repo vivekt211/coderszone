@@ -11,6 +11,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.coderszone.blog.dao.BlogDao;
 import com.coderszone.blog.model.Blog;
+import com.coderszone.blog.model.Comment;
+import com.coderszone.blog.model.CommentParam;
 import com.coderszone.blog.service.BlogService;
 import com.coderszone.common.exception.DataBaseAccessException;
 import com.coderszone.common.pageutil.Page;
@@ -91,6 +93,28 @@ public class BlogServiceImpl implements BlogService {
 			throw new DataBaseAccessException("Sorry DataBase access has some problem");
 		}
 	}
+	@Override
+	public List<Comment> getComments(int blogId) throws DataBaseAccessException {
+		try{
+			return blogDao.getAllCommentsByBlogId(blogId);
+		}catch(DataAccessException ex){
+			ex.printStackTrace();
+			throw new DataBaseAccessException("Sorry DataBase access has some problem");
+		}
+	}
+	
+	@Override
+	public Comment postComments(CommentParam commentParam)
+			throws DataBaseAccessException {
+		try{
+			int id= blogDao.postComment(commentParam);
+			Comment comment=blogDao.getCommentById(id);
+			return comment;
+		}catch(DataAccessException ex){
+			ex.printStackTrace();
+			throw new DataBaseAccessException("Sorry DataBase access has some problem");
+		}
+	}
 	
 	public BlogDao getBlogDao() {
 		return blogDao;
@@ -99,6 +123,8 @@ public class BlogServiceImpl implements BlogService {
 	public void setBlogDao(BlogDao blogDao) {
 		this.blogDao = blogDao;
 	}
+	
+	
 	
 	
 

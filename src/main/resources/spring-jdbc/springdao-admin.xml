@@ -32,6 +32,9 @@ http://www.springframework.org/schema/beans/spring-beans.xsd">
 		<property name="getAllBlogSizeByUserID" value="SELECT count(*) FROM codersdb.blog where created_by=?;"/>
 		<property name="getAllBlogByUSerID" value="SELECT bl.*,t.name tagName FROM codersdb.blog bl left join codersdb.blog_tags_map btm ON bl.id=btm.blog_id
 														LEFT JOIN codersdb.tags t ON btm.tag_id=t.id Where bl.created_by = ? ORDER BY bl.mod_date DESC LIMIT ?,?;"/>
+	    <property name="getAllCommentsByBlogId" value="SELECT * FROM codersdb.comment where blog_id=?;"/>
+	    <property name="insertComment" value="INSERT INTO codersdb.comment (date_time, name, email, content, blog_id) VALUES (?, ?, ?, ?, ?);"/>
+	    <property name="getCommentById" value="SELECT * FROM codersdb.comment where id=?;"/>
 	</bean>
 
 </beans>

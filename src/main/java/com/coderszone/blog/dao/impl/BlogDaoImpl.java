@@ -2,6 +2,7 @@ package com.coderszone.blog.dao.impl;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Date;
 import java.util.List;
@@ -12,6 +13,7 @@ import javax.sql.DataSource;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.PreparedStatementCreator;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 
@@ -20,6 +22,8 @@ import com.coderszone.blog.mapper.BlogResultSetExtractor;
 import com.coderszone.blog.mapper.BlogResultSetMapper;
 import com.coderszone.blog.mapper.TagIdResultSetExtractor;
 import com.coderszone.blog.model.Blog;
+import com.coderszone.blog.model.Comment;
+import com.coderszone.blog.model.CommentParam;
 import com.coderszone.common.DateUtil;
 import com.coderszone.common.pageutil.Page;
 import com.coderszone.common.pageutil.PaginationHelper;
@@ -48,6 +52,32 @@ public class BlogDaoImpl implements BlogDao {
 	private String getAllBlog;
 	private String getAllBlogSizeByUserID;
 	private String getAllBlogByUSerID;
+
+	private String getAllCommentsByBlogId;
+
+	protected String insertComment;
+	private String getCommentById;
+	
+		public String getInsertComment() {
+		return insertComment;
+	}
+
+
+	public void setInsertComment(String insertComment) {
+		this.insertComment = insertComment;
+	}
+
+
+		public String getGetAllCommentsByBlogId() {
+		return getAllCommentsByBlogId;
+	}
+
+
+	public void setGetAllCommentsByBlogId(String getAllCommentsByBlogId) {
+		this.getAllCommentsByBlogId = getAllCommentsByBlogId;
+	}
+
+
 		public void setDataSource(DataSource dataSource) {
 		this.dataSource = dataSource;
 		this.jdbcTemplate = new JdbcTemplate(dataSource);
@@ -175,6 +205,60 @@ public class BlogDaoImpl implements BlogDao {
 
 	}
 	
+	@Override
+	public List<Comment> getAllCommentsByBlogId(int blogId) {
+		return jdbcTemplate.query(getAllCommentsByBlogId,new Object[]{blogId},new RowMapper<Comment>(){
+			
+			@Override
+			public Comment mapRow(ResultSet rs, int No) throws SQLException {
+				Comment commnt=new Comment();
+				commnt.setId(rs.getInt("id"));
+				commnt.setDateTime(DateUtil.timeStampToString(rs.getTimestamp("date_time")));
+				commnt.setName(rs.getString("name"));
+				commnt.setEmail(rs.getString("email"));
+				commnt.setContent(rs.getString("content"));
+				return commnt;
+			}});
+		
+	}
+	@Override
+	public int postComment(final CommentParam commentParam) {
+		KeyHolder keyHolder = new GeneratedKeyHolder();
+		jdbcTemplate.update(new PreparedStatementCreator() {
+
+			public PreparedStatement createPreparedStatement(Connection connection) throws SQLException {
+				PreparedStatement ps = connection.prepareStatement(insertComment, 1);
+				ps.setTimestamp(1, DateUtil.utilToSql(new Date()));
+				ps.setString(2, commentParam.getName());
+				ps.setString(3, commentParam.getEmail());
+				ps.setString(4, commentParam.getContent());
+				ps.setInt(5, commentParam.getBlogId());
+				return ps;
+			}
+		}, keyHolder);
+		int key = keyHolder.getKey().intValue();
+		return key;
+	}
+
+
+	@Override
+	public Comment getCommentById(int id) {
+		
+      return jdbcTemplate.queryForObject(getCommentById,new Object[]{id},new RowMapper<Comment>(){
+			
+			@Override
+			public Comment mapRow(ResultSet rs, int No) throws SQLException {
+				Comment commnt=new Comment();
+				commnt.setId(rs.getInt("id"));
+				commnt.setDateTime(DateUtil.timeStampToString(rs.getTimestamp("date_time")));
+				commnt.setName(rs.getString("name"));
+				commnt.setEmail(rs.getString("email"));
+				commnt.setContent(rs.getString("content"));
+				return commnt;
+			}});
+		
+	}
+
 	
 	public String getGetTagIdMap() {
 		return getTagIdMap;
@@ -296,6 +380,20 @@ public class BlogDaoImpl implements BlogDao {
 		this.getAllBlog = getAllBlog;
 	}
 
+
+	public String getGetCommentById() {
+		return getCommentById;
+	}
+
+
+	public void setGetCommentById(String getCommentById) {
+		this.getCommentById = getCommentById;
+	}
+
+
+	
+
+	
 
 
 

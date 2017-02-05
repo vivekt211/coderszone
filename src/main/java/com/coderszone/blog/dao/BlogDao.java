@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.Map;
 
 import com.coderszone.blog.model.Blog;
+import com.coderszone.blog.model.Comment;
+import com.coderszone.blog.model.CommentParam;
 import com.coderszone.common.pageutil.Page;
 
 public interface BlogDao {
@@ -29,6 +31,12 @@ public interface BlogDao {
 	Page<Blog> getAllBlogsByUserId(String username, int pageNo, int pageSize);
 
 	void insertTagMap(int id, String tags, Map<String, Integer> tagMap);
+
+	List<Comment> getAllCommentsByBlogId(int blogId);
+
+	int postComment(CommentParam commentParam);
+
+	Comment getCommentById(int id);
 
 
 }
