@@ -169,6 +169,20 @@ public class BlogController{
 		return res;
 	}
 
+	@RequestMapping(value="/newpass",method = RequestMethod.GET)
+	public ResponseModel<String> getNewPass(@RequestParam String id,Model model) {
+		ResponseModel<String> res=new ResponseModel<String>();
+		try {
+			blogService.createNewPassword(id);
+			res.setResponseCode(Constants.RESPONSE_OK);
+			res.setMessage("Thank you ! Your new password has been send to you. Please check your mail ");
+		} catch (DataBaseAccessException e) {
+			res.setResponseCode(Constants.RESPONSE_FAILED);
+			res.setMessage("Sorry ! Something went horribly wrong. I will fix it. please give me some time ! ");
+			e.printStackTrace();
+		}
+		return res;
+	}
 	public BlogService getBlogService() {
 		return blogService;
 	}

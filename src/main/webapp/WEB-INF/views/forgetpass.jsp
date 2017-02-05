@@ -7,7 +7,7 @@
 
 <head>
  <%@ include file="title.jsp"%>  
-  <title>CodersZone | login</title>
+  <title>CodersZone | Forget Password</title>
    
 <!-- Stylesheets and Fonts-->
 <link href='https://fonts.googleapis.com/css?family=Merriweather:300,400,400italic,700|Oxygen:400,300,700' rel='stylesheet' type='text/css'>
@@ -75,28 +75,15 @@
       
         <div class="login-pg">
               <div class="login-block">
-                <form id="loginform" action="<c:url value='/j_spring_security_check' />" method="post">
+                <form id="forgetform" method="post">
+                 <div class="item-fl" id="msg">
+                  </div>
                   <div class="item-fl">
                     <input type="text" name="username" id="userid" class="txt" placeholder="Enter your Email Id" />
                   </div>
-                  <div class="item-fl">
-                    <input type="password" name="password" id="password" placeholder="Enter password" />
-                  </div>
                   <div class="item-block">
                     <div class="rght">
-                      <input name="remember" type="checkbox" value="Remember Me">
-                      <span class="checktxt">Remember Me</span>
-                      <a class="fpass" href="/service/forgetpass"> Forget password ?</a>
-                      <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
-                    </div>
-                  </div>
-
-                  <div class="item-block">
-                    <div class="rght">
-                      <input type="button" value="login" class="greenBtn" id="loginbtn" />
-                    </div>
-                     <div class="lft">
-                      <input type="button" value="register" class="greenBtn" id="regbtn" />
+                      <input type="button" value="Send New Password" class="greenBtn" id="passbtn" />
                     </div>
                   </div>
                   </form>
@@ -118,6 +105,8 @@
   <script src="/service/resources/base/js/functions.js"></script>
   <script src="/service/resources/base/js/ajax-form.js"></script>
   <script src="/service/resources/base/js/vendor/jquery.cookie.js"></script>
+    <script type="text/javascript" src="/service/resources/js/jquery.noty.packaged.js"></script>
+    <script type="text/javascript" src="/service/resources/js/notice.js"></script>
 
   <script>
       $(document).on('ready', function() {
@@ -125,13 +114,18 @@
         video.addEventListener("canplay", function() {
           video.play();
         }); */
-
-        $("#regbtn").click(function() {
-          //Alert ajax call to register
-          window.location.href = "/service/registration";
-        });
-        $("#loginbtn").click(function() {
-          $("#loginform").submit();
+        $("#passbtn").click(function() {
+          $.ajax({
+            url: '/service/newpass?id=' + $("#userid").val(),
+            type: 'GET',
+            success: function(result) {
+              if (result.responseCode == 200) {
+            	notify('success',result.message);
+                } else {
+               	notify('error',result.message);
+              }
+            }
+          });
         });
       });
     </script>

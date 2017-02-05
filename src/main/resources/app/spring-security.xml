@@ -64,6 +64,7 @@
       <beans:property name="dataSource" ref="dataSource" />
        <beans:property name="queryForUserByUserId" value="SELECT * FROM codersdb.user u where user_name=?;"/>
 	   <beans:property name="queryForRolesByUserId" value="select urm.role_id from codersdb.user_role_map urm where urm.user_id=?;"/>
+  		<beans:property name="updatePassword" value="UPDATE codersdb.user SET password=? WHERE user_name=?;"/>
   </beans:bean>
   
   <beans:bean id="userService" class="com.coderszone.authentication.service.UserService">

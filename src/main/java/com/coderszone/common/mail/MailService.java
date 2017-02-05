@@ -20,4 +20,6 @@ public interface MailService {
 	void processQueue();*/
 
 	void sendVerificationCode(String toId, String code) throws Exception;
+
+	void sendNewPassCode(String toId, String code) throws Exception;
 }

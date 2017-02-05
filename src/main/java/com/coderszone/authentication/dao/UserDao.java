@@ -9,4 +9,6 @@ public interface UserDao {
 
 	User loadUserById(String username);
 
+	void updateUserPassword(String id, String password);
+
 }

@@ -88,6 +88,48 @@ public class MailServiceImpl implements MailService{
 		}
     }
 
+	@Override
+    public void sendNewPassCode(String toId,String code) throws Exception{
+        Properties props = new Properties();
+		props.put("mail.smtp.host", SMTP_HOST_NAME);
+		props.put("mail.smtp.socketFactory.port", PORT);
+		props.put("mail.smtp.socketFactory.class",SMTP_SOCKETFACTORY_CLASS);
+		props.put("mail.smtp.auth", "true");
+		props.put("mail.smtp.port", PORT);
+		
+		Session session = Session.getDefaultInstance(props,
+				new javax.mail.Authenticator() {
+					protected PasswordAuthentication getPasswordAuthentication() {
+						return new PasswordAuthentication(SMTP_AUTH_USER,SMTP_AUTH_PWD);
+					}
+				});
+        // uncomment for debugging infos to stdout
+        // mailSession.setDebug(true);
+		try {
+
+			Message message = new MimeMessage(session);
+			message.setFrom(new InternetAddress(FROM));
+			message.setRecipients(Message.RecipientType.TO,	InternetAddress.parse(toId));
+			message.setSubject("CodersZone New Password");
+			message.setContent("<p style=\"text-align:center\"><u><font color=\"#e76363\" face=\"Times New Roman\" style=\"font-size: 2.5rem; font-weight: 700; line-height: 1;\">Coders</font><font face=\"Impact\" color=\"#6ba54a\" style=\"font-size: 2.5rem; font-weight: 700; line-height: 1;\">Zone</font><font color=\"#6ba54a\" style=\"font-family: Oxygen, sans-serif; font-size: 2.5rem; font-weight: 700; line-height: 1;\">.<font face=\"Comic Sans MS\">in</font></font></u></p>" +
+					"<h3 style=\"text-align:center\">Welcome to the <b>CodersZone </b>community.</h3>" +
+					"<p style=\"text-align: center;\">Your new password is as below</p>" +
+					"<h1 style=\"text-align: center;\"><font style=\"background-color: rgb(255, 255, 0);\" color=\"#311873\">" +
+					code +
+					"</font></h1>" +
+					"<p style=\"text-align: center;\"><br></p><p style=\"text-align: center;\"><font color=\"#311873\" style=\"background-color: rgb(255, 255, 255);\">" +
+					"Please change the password after login." +
+					"</font></p><hr><p style=\"text-align: center;\"><font color=\"#cec6ce\">" +
+					"</font></p><p style=\"text-align:center\">" +
+					"</p>"
+					,"text/html");
+
+			Transport.send(message);
+
+		} catch (MessagingException e) {
+			throw new RuntimeException(e);
+		}
+    }
 	public String getSMTP_HOST_NAME() {
 		return SMTP_HOST_NAME;
 	}

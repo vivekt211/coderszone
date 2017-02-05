@@ -26,4 +26,6 @@ public interface BlogService {
 
 	Comment postComments(CommentParam commentParam) throws DataBaseAccessException;
 
+	void createNewPassword(String id) throws DataBaseAccessException;
+
 }

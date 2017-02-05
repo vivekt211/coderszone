@@ -9,12 +9,15 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.coderszone.authentication.dao.UserDao;
 import com.coderszone.blog.dao.BlogDao;
 import com.coderszone.blog.model.Blog;
 import com.coderszone.blog.model.Comment;
 import com.coderszone.blog.model.CommentParam;
 import com.coderszone.blog.service.BlogService;
 import com.coderszone.common.exception.DataBaseAccessException;
+import com.coderszone.common.key.KeyGenService;
+import com.coderszone.common.mail.MailService;
 import com.coderszone.common.pageutil.Page;
 
 @Service
@@ -23,7 +26,14 @@ public class BlogServiceImpl implements BlogService {
 
 	@Autowired
 	private BlogDao blogDao;
-
+	@Autowired
+	private KeyGenService keyGenService;
+	
+	@Autowired
+	private UserDao userDao;
+	@Autowired
+	private MailService mailService;
+	
 	@Override
 	public Blog getBlog(int id) throws DataBaseAccessException {
 		try {
@@ -115,7 +125,24 @@ public class BlogServiceImpl implements BlogService {
 			throw new DataBaseAccessException("Sorry DataBase access has some problem");
 		}
 	}
-	
+	@Override
+	@Transactional(propagation=Propagation.REQUIRED, readOnly=false, rollbackFor=Exception.class)
+	public void createNewPassword(String id) throws DataBaseAccessException {
+		String pasrd = null;
+		try{
+			pasrd = keyGenService.generateNewKeys(); 
+			
+			System.out.println("password :"+pasrd);
+			userDao.updateUserPassword(id,pasrd);
+			 mailService.sendNewPassCode(id, pasrd);
+		}catch(DataAccessException ex){
+			ex.printStackTrace();
+			throw new DataBaseAccessException("Sorry DataBase access has some problem");
+		} catch (Exception e) {
+			throw new DataBaseAccessException("Sorry there is some problem in mailing");
+		}
+		
+	}
 	public BlogDao getBlogDao() {
 		return blogDao;
 	}
@@ -124,7 +151,25 @@ public class BlogServiceImpl implements BlogService {
 		this.blogDao = blogDao;
 	}
 	
+	public KeyGenService getKeyGenService() {
+		return keyGenService;
+	}
+	public void setKeyGenService(KeyGenService keyGenService) {
+		this.keyGenService = keyGenService;
+	}
 	
+	public UserDao getUserDao() {
+		return userDao;
+	}
+	public void setUserDao(UserDao userDao) {
+		this.userDao = userDao;
+	}
+	public MailService getMailService() {
+		return mailService;
+	}
+	public void setMailService(MailService mailService) {
+		this.mailService = mailService;
+	}
 	
 	
 

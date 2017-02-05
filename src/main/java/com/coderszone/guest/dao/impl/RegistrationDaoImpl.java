@@ -39,8 +39,8 @@ public class RegistrationDaoImpl implements RegistrationDao {
 	private String createNewUser;
 	private String getUserByUserId;
 	private String getUserById;
-	protected String updateUserAsVerified;
-	protected String insertUserRole;
+	private String updateUserAsVerified;
+	private String insertUserRole;
 
 	@Override
 	public int registerUser(final RegistrationModel registrationModel,final String regKey) {

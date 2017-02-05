@@ -10,7 +10,7 @@ http://www.springframework.org/schema/beans/spring-beans.xsd">
 		<property name="getUserById" value="SELECT * FROM codersdb.user where id= ?;" />
 		<property name="updateUserAsVerified" value="UPDATE codersdb.user SET verified=? WHERE id=?;" />
 		<property name="insertUserRole" value="INSERT INTO codersdb.user_role_map (user_id, role_id, mod_by, mod_date) VALUES (?, ?, ?, ?);"/>
-	</bean>
+		</bean>
 	
 	<bean id="blogDao" class="com.coderszone.blog.dao.impl.BlogDaoImpl">
 		<property name="dataSource" ref="dataSource" />
