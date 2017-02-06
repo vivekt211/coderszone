@@ -5,6 +5,7 @@ import java.util.List;
 import javax.mail.MessagingException;
 
 import com.coderszone.common.beans.MailMessage;
+import com.coderszone.common.exception.MailServiceException;
 
 
 public interface MailService {
@@ -19,7 +20,7 @@ public interface MailService {
 
 	void processQueue();*/
 
-	void sendVerificationCode(String toId, String code) throws Exception;
+	void sendVerificationCode(String toId, String code) throws MailServiceException;
 
-	void sendNewPassCode(String toId, String code) throws Exception;
+	void sendNewPassCode(String toId, String code) throws MailServiceException;
 }

@@ -7,15 +7,18 @@ import java.util.List;
 
 import javax.sql.DataSource;
 
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.PreparedStatementCreator;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 import com.coderszone.authentication.dao.UserDao;
 import com.coderszone.authentication.mapper.GrantedAuthorityMapper;
 import com.coderszone.authentication.mapper.UserDetailsMapper;
 import com.coderszone.authentication.mapper.UserMapper;
 import com.coderszone.authentication.model.User;
+import com.coderszone.common.exception.UserNotRegisteredException;
 
 public class UserDaoImpl implements UserDao {
 
@@ -39,27 +42,20 @@ public class UserDaoImpl implements UserDao {
 	@Override
 	public User loadUserByUsername(String username) {
 		User user = null;
-		try {
-			user = jdbcTemplate.queryForObject(queryForUserByUserId, new Object[] { username }, new UserMapper());
-			List<GrantedAuthority> roleList = jdbcTemplate.query(queryForRolesByUserId, new Object[] { username }, new GrantedAuthorityMapper());
-			user.setAuthorities(roleList);
-		} catch (Exception ex) {
-			ex.printStackTrace();
-		}
+		user = jdbcTemplate.queryForObject(queryForUserByUserId, new Object[] { username }, new UserMapper());
+		List<GrantedAuthority> roleList = jdbcTemplate.query(queryForRolesByUserId, new Object[] { username }, new GrantedAuthorityMapper());
+		user.setAuthorities(roleList);
 		return user;
 
 	}
 
 	@Override
-	public User loadUserById(String username) {
+	public User loadUserById(String username) throws UserNotRegisteredException {
 		User user = null;
-		try {
-			user = jdbcTemplate.queryForObject(queryForUserByUserId, new Object[] { username }, new UserDetailsMapper());
-			List<GrantedAuthority> roleList = jdbcTemplate.query(queryForRolesByUserId, new Object[] { username }, new GrantedAuthorityMapper());
-			user.setAuthorities(roleList);
-		} catch (Exception ex) {
-			ex.printStackTrace();
-		}
+		user = jdbcTemplate.queryForObject(queryForUserByUserId, new Object[] { username }, new UserDetailsMapper());
+		List<GrantedAuthority> roleList = jdbcTemplate.query(queryForRolesByUserId, new Object[] { username }, new GrantedAuthorityMapper());
+		user.setAuthorities(roleList);
+		
 		return user;
 	}
 

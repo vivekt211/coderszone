@@ -20,7 +20,7 @@
 <link rel="stylesheet" href="/service/resources/base/css/responsive.css">
 <link rel="stylesheet" id="default" href="/service/resources/base/css/colors/colors.css" />
 <link rel="stylesheet" href="/service/resources/css/style.css">
-
+    
 <!-- Scripts -->
 <script src="/service/resources/base/js/vendor/jquery.min.js"></script>
 <!--[if IE]>
@@ -109,23 +109,40 @@
     <script type="text/javascript" src="/service/resources/js/notice.js"></script>
 
   <script>
+      function valid(){
+        var email=$("#userid").val();
+        if(email.trim()==''  ){
+      		notify("error","Fields cannot be empty, plese fill it");
+      		return false;
+      	}
+        if (/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(email)) {
+            return true;
+        }else{
+            notify('error',"Please Enter a valid Email");
+            return false;
+        }
+      }
+      
       $(document).on('ready', function() {
         /* var video = document.getElementById("heroVideo");
         video.addEventListener("canplay", function() {
           video.play();
         }); */
         $("#passbtn").click(function() {
-          $.ajax({
-            url: '/service/newpass?id=' + $("#userid").val(),
-            type: 'GET',
-            success: function(result) {
-              if (result.responseCode == 200) {
-            	notify('success',result.message);
-                } else {
-               	notify('error',result.message);
+          if(valid()){
+            $.ajax({
+              url: '/service/newpass?id=' + $("#userid").val(),
+              type: 'GET',
+              success: function(result) {
+                if (result.responseCode == 200) {
+                  	notifyGoLogin('success',result.message);
+                  } else {
+                 	notify('error',result.message);
+                }
               }
-            }
-          });
+            });
+          }
+          
         });
       });
     </script>

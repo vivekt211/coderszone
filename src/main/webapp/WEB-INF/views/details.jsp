@@ -231,16 +231,13 @@
     	if(validComments()){
     		postComment();
     	}
-    })
+    });
     function postComment(){
-    	notify("info",JSON.stringify($("#commentWrite").serialize()))
     	var name=$("#usrName").val();
     	var email=$("#usrEmail").val();
     	var content=$("#comment").val();
     	
     	var dt={"name":name,"email":email,"content":content,"blogId":$("#blogid").val()};
-    	notify("info",JSON.stringify(dt));
-    	
     	 $.ajax({
              url: '/service/postcomment',
              type: 'POST',

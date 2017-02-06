@@ -25,6 +25,8 @@ import com.coderszone.common.Constants;
 import com.coderszone.common.DateUtil;
 import com.coderszone.common.beans.ResponseModel;
 import com.coderszone.common.exception.DataBaseAccessException;
+import com.coderszone.common.exception.MailServiceException;
+import com.coderszone.common.exception.UserNotRegisteredException;
 
 
 @Controller
@@ -170,7 +172,7 @@ public class BlogController{
 	}
 
 	@RequestMapping(value="/newpass",method = RequestMethod.GET)
-	public ResponseModel<String> getNewPass(@RequestParam String id,Model model) {
+	public @ResponseBody ResponseModel<String> getNewPass(@RequestParam String id,Model model) {
 		ResponseModel<String> res=new ResponseModel<String>();
 		try {
 			blogService.createNewPassword(id);
@@ -180,6 +182,12 @@ public class BlogController{
 			res.setResponseCode(Constants.RESPONSE_FAILED);
 			res.setMessage("Sorry ! Something went horribly wrong. I will fix it. please give me some time ! ");
 			e.printStackTrace();
+		} catch (UserNotRegisteredException e) {
+			res.setResponseCode(Constants.RESPONSE_FAILED);
+			res.setMessage("Sorry ! The user doesnot seems to be registered . ");
+		} catch (MailServiceException e) {
+			res.setResponseCode(Constants.RESPONSE_FAILED);
+			res.setMessage("Sorry ! We are experiencing problem in mail service, The new password could not be sent. ");
 		}
 		return res;
 	}

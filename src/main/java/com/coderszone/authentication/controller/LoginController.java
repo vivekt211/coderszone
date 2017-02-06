@@ -25,6 +25,7 @@ import com.coderszone.blog.model.Blog;
 import com.coderszone.blog.service.BlogService;
 import com.coderszone.common.Constants;
 import com.coderszone.common.exception.DataBaseAccessException;
+import com.coderszone.common.exception.UserNotRegisteredException;
 import com.coderszone.common.pageutil.Page;
 
 @Controller
@@ -51,7 +52,17 @@ public class LoginController {
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 		String name = auth.getName();
 		Collection<GrantedAuthority> authri = (Collection<GrantedAuthority>) auth.getAuthorities();
-		User u = userCustomService.loadUserById(name);
+		User u=null;
+		try {
+			u = userCustomService.loadUserById(name);
+		} catch (UserNotRegisteredException e1) {
+			model.addAttribute("message", e1.getMessage());
+			StringWriter sw = new StringWriter();
+			PrintWriter pw = new PrintWriter(sw);
+			e1.printStackTrace(pw);
+			model.addAttribute("trace", sw.toString());
+			return "error";
+		}
 		if (u.getIsVerified() == 0) {
 			//model.addAttribute("cd", u.getVerificationKey());
 			model.addAttribute("id", u.getId());

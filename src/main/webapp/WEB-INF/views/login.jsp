@@ -76,6 +76,11 @@
         <div class="login-pg">
               <div class="login-block">
                 <form id="loginform" action="<c:url value='/j_spring_security_check' />" method="post">
+                <c:if test='${param["error"]}'>
+                  <div class="item-fl">
+                     UserName or password is incorrect, Please use correct credentials.
+                  </div>
+                </c:if>
                   <div class="item-fl">
                     <input type="text" name="username" id="userid" class="txt" placeholder="Enter your Email Id" />
                   </div>

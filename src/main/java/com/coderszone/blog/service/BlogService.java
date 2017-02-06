@@ -6,6 +6,8 @@ import com.coderszone.blog.model.Blog;
 import com.coderszone.blog.model.Comment;
 import com.coderszone.blog.model.CommentParam;
 import com.coderszone.common.exception.DataBaseAccessException;
+import com.coderszone.common.exception.MailServiceException;
+import com.coderszone.common.exception.UserNotRegisteredException;
 import com.coderszone.common.pageutil.Page;
 
 public interface BlogService {
@@ -26,6 +28,6 @@ public interface BlogService {
 
 	Comment postComments(CommentParam commentParam) throws DataBaseAccessException;
 
-	void createNewPassword(String id) throws DataBaseAccessException;
+	void createNewPassword(String id) throws DataBaseAccessException, UserNotRegisteredException, MailServiceException;
 
 }

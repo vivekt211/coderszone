@@ -5,17 +5,21 @@ import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.coderszone.authentication.dao.UserDao;
+import com.coderszone.authentication.model.User;
 import com.coderszone.blog.dao.BlogDao;
 import com.coderszone.blog.model.Blog;
 import com.coderszone.blog.model.Comment;
 import com.coderszone.blog.model.CommentParam;
 import com.coderszone.blog.service.BlogService;
 import com.coderszone.common.exception.DataBaseAccessException;
+import com.coderszone.common.exception.MailServiceException;
+import com.coderszone.common.exception.UserNotRegisteredException;
 import com.coderszone.common.key.KeyGenService;
 import com.coderszone.common.mail.MailService;
 import com.coderszone.common.pageutil.Page;
@@ -127,19 +131,18 @@ public class BlogServiceImpl implements BlogService {
 	}
 	@Override
 	@Transactional(propagation=Propagation.REQUIRED, readOnly=false, rollbackFor=Exception.class)
-	public void createNewPassword(String id) throws DataBaseAccessException {
+	public void createNewPassword(String id) throws DataBaseAccessException, UserNotRegisteredException, MailServiceException {
 		String pasrd = null;
 		try{
+			User user= userDao.loadUserById(id);
 			pasrd = keyGenService.generateNewKeys(); 
-			
 			System.out.println("password :"+pasrd);
 			userDao.updateUserPassword(id,pasrd);
 			 mailService.sendNewPassCode(id, pasrd);
+		}catch(EmptyResultDataAccessException ex){
+			throw new UserNotRegisteredException("Sorry !the user is not registered");
 		}catch(DataAccessException ex){
-			ex.printStackTrace();
 			throw new DataBaseAccessException("Sorry DataBase access has some problem");
-		} catch (Exception e) {
-			throw new DataBaseAccessException("Sorry there is some problem in mailing");
 		}
 		
 	}

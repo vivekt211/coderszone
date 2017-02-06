@@ -257,3 +257,12 @@ textarea.comment{
 	width:100%;
 	height:100px;
 }
+.noty_message{
+	padding:20px;
+}
+.noty_buttons{
+	height: 38px;
+}
+.noty_buttons button{
+   padding: 2px 25px;
+}

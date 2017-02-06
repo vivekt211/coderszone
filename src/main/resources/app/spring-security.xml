@@ -44,6 +44,10 @@
 		<intercept-url pattern="/service/searchlist"  access="permitAll"/>
 		<intercept-url pattern="/service/homepg"  access="permitAll"/>
 		<intercept-url pattern="/service/registration" access="permitAll"/>
+		<intercept-url pattern="/service/register" access="permitAll"/>
+		<intercept-url pattern="/service/comments" access="permitAll"/>
+		<intercept-url pattern="/service/postcomment" access="permitAll"/>
+		<intercept-url pattern="/service/newpass" access="permitAll"/>
 		<intercept-url pattern="/service/write" access="hasAnyRole('ROLE_ADMIN','ROLE_SUPER_ADMIN','ROLE_BLOGGER')"/>
 		<intercept-url pattern="/service/mypage" access="hasAnyRole('ROLE_ADMIN','ROLE_SUPER_ADMIN','ROLE_BLOGGER')"/>
 		<intercept-url pattern="/service/main" access="hasAnyRole('ROLE_ADMIN','ROLE_SUPER_ADMIN','ROLE_BLOGGER')"/>

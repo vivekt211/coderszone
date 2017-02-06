@@ -21,6 +21,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.coderszone.common.beans.MailMessage;
+import com.coderszone.common.exception.MailServiceException;
 import com.coderszone.common.mail.MailService;
 
 @Service("mailService")
@@ -43,7 +44,7 @@ public class MailServiceImpl implements MailService{
 	private Queue<MailMessage> mailMessageQueue;
 	
 	@Override
-    public void sendVerificationCode(String toId,String code) throws Exception{
+    public void sendVerificationCode(String toId,String code) throws MailServiceException{
         Properties props = new Properties();
 		props.put("mail.smtp.host", SMTP_HOST_NAME);
 		props.put("mail.smtp.socketFactory.port", PORT);
@@ -84,12 +85,12 @@ public class MailServiceImpl implements MailService{
 			System.out.println("Done");
 
 		} catch (MessagingException e) {
-			throw new RuntimeException(e);
+			throw new MailServiceException(e);
 		}
     }
 
 	@Override
-    public void sendNewPassCode(String toId,String code) throws Exception{
+    public void sendNewPassCode(String toId,String code) throws MailServiceException{
         Properties props = new Properties();
 		props.put("mail.smtp.host", SMTP_HOST_NAME);
 		props.put("mail.smtp.socketFactory.port", PORT);
@@ -127,7 +128,7 @@ public class MailServiceImpl implements MailService{
 			Transport.send(message);
 
 		} catch (MessagingException e) {
-			throw new RuntimeException(e);
+			throw new MailServiceException(e);
 		}
     }
 	public String getSMTP_HOST_NAME() {

@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.coderszone.common.Constants;
 import com.coderszone.common.beans.ResponseModel;
 import com.coderszone.common.exception.DataBaseAccessException;
+import com.coderszone.common.exception.MailServiceException;
 import com.coderszone.common.exception.UserIdAlreadyExistException;
 import com.coderszone.guest.model.RegistrationModel;
 import com.coderszone.guest.service.RegistrationService;
@@ -37,6 +38,10 @@ public class RegistrationController{
 			rs.setData(registrationModel);
 			
 		} catch (DataBaseAccessException e) {
+			rs.setResponseCode(Constants.RESPONSE_FAILED);
+			rs.setMessage(e.getMessage());
+			rs.setData(registrationModel);
+		} catch (MailServiceException e) {
 			rs.setResponseCode(Constants.RESPONSE_FAILED);
 			rs.setMessage(e.getMessage());
 			rs.setData(registrationModel);

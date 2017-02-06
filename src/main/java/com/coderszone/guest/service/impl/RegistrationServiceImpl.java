@@ -8,6 +8,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.coderszone.common.exception.DataBaseAccessException;
+import com.coderszone.common.exception.MailServiceException;
 import com.coderszone.common.exception.UserIdAlreadyExistException;
 import com.coderszone.common.key.KeyGenService;
 import com.coderszone.common.mail.MailService;
@@ -30,34 +31,35 @@ public class RegistrationServiceImpl implements RegistrationService {
 	
 	@Override
 	@Transactional(propagation=Propagation.REQUIRED, readOnly=false, rollbackFor=Exception.class)
-	public RegistrationModel registerUser(RegistrationModel registrationModel) throws DataBaseAccessException,UserIdAlreadyExistException {
+	public RegistrationModel registerUser(RegistrationModel registrationModel) throws DataBaseAccessException,UserIdAlreadyExistException, MailServiceException {
 				try {
 					 User user=registrationDao.getUserByUserId(registrationModel.getEmail());
-					 throw new UserIdAlreadyExistException("Sorry ! It seems you have already registered with this Id." +
-					 										" Please choose another Id or click forget password link");
+					 if(user!=null){
+						 throw new UserIdAlreadyExistException("Sorry ! It seems you have already registered with this Id. Please choose another Id or click forget password link");
+					 }else{
+						 register(registrationModel);
+					 }
 				}catch (EmptyResultDataAccessException ex) {
-					try {
-						String s=keyGenService.generateNewKeys();
-						int id = registrationDao.registerUser(registrationModel,s);
-						registrationDao.insertUserRole(registrationModel.getEmail());
-						registrationModel.setId(id);
-						MailService.sendVerificationCode(registrationModel.getEmail(),s);
-						
-					} catch (DataAccessException exx) {
-						exx.printStackTrace();
-						throw new DataBaseAccessException("Sorry DataBase access has some problem");
-					} catch (Exception e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-						throw new DataBaseAccessException("Sorry Email Service has some problem");
-					}
+					register(registrationModel);
 				} catch (DataAccessException ex) {
 					ex.printStackTrace();
 					throw new DataBaseAccessException("Sorry DataBase access has some problem");
 				}
 		return registrationModel;
 	}
-	
+	private void register(RegistrationModel registrationModel) throws DataBaseAccessException, MailServiceException{
+		try {
+			String s=keyGenService.generateNewKeys();
+			int id = registrationDao.registerUser(registrationModel,s);
+			registrationDao.insertUserRole(registrationModel.getEmail());
+			registrationModel.setId(id);
+			MailService.sendVerificationCode(registrationModel.getEmail(),s);
+			
+		} catch (DataAccessException exx) {
+			exx.printStackTrace();
+			throw new DataBaseAccessException("Sorry DataBase access has some problem");
+		}
+	}
 	@Override
 	@Transactional(propagation=Propagation.REQUIRED, readOnly=false, rollbackFor=Exception.class)
 	public boolean verifyUser(int id, String code) throws DataBaseAccessException {

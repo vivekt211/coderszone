@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service;
 import com.coderszone.common.key.KeyGenService;
 
 
-@Service
+@Service("keyGenService")
 public class KeyGenServiceImpl implements KeyGenService{
 	
 	@Override
@@ -29,9 +29,9 @@ public class KeyGenServiceImpl implements KeyGenService{
 		    return new String(buf);
 	}
 	
- public static void main(String[] args) {
+ /*public static void main(String[] args) {
 	KeyGenService keygen=new KeyGenServiceImpl();
 	System.out.println(keygen.generateNewKeys());
-}
+}*/
 
 }

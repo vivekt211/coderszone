@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import com.coderszone.authentication.dao.UserDao;
 import com.coderszone.authentication.model.User;
+import com.coderszone.common.exception.UserNotRegisteredException;
 
  
 @Service
@@ -23,7 +24,7 @@ public class UserCustomService{
 		this.userDao = userDao;
 	}
 	
-    public User loadUserById(final String username) throws UsernameNotFoundException {
+    public User loadUserById(final String username) throws UserNotRegisteredException {
         return userDao.loadUserById(username);
     }
 }

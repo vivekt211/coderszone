@@ -10,7 +10,7 @@
       <li><a href="${context_root}/service/maintainimg">Upload</a></li>
       <li class="dropDown"><a href="#">${user.name }</a>
         <ul>
-          <li><a href="<c:url value='/logout'/>">logout</a></li>
+          <li><a href="<c:url value='/service/logout'/>">logout</a></li>
         </ul></li>
     </c:when>
     <c:otherwise>
