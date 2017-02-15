@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.net.URLConnection;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -25,6 +26,7 @@ import javax.servlet.http.HttpSession;
 import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -42,16 +44,15 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.multipart.commons.CommonsMultipartFile;
 
+import com.coderszone.blog.controller.BlogController;
 import com.coderszone.common.beans.FileMeta;
 import com.coderszone.common.exception.CommonServiceException;
 import com.coderszone.common.service.UploadService;
 
 @Controller
-@RequestMapping("/upfile")
 public class FileuploadController {
-	
-	@Value("${upload.path}")
-	private String imgpath;
+	static Logger log = Logger.getLogger(FileuploadController.class.getName());
+
 	@Value("${coderszone.context}")
 	private String rootContext;
 	
@@ -64,12 +65,12 @@ public class FileuploadController {
 	}
 
 	@Autowired
-	@Qualifier(value="uploadServiceLocalImpl")
+	@Qualifier(value="uploadServiceImpl")
 	private UploadService uploadService;
 
-	@RequestMapping(value = "/upload", method = RequestMethod.POST)
+	@RequestMapping(value = "/upfile/upload", method = RequestMethod.POST)
 	public Object upload(MultipartHttpServletRequest request, HttpServletResponse response) throws IOException, FileUploadException {
-		System.out.println("Upload request recieved ");
+		log.debug("Upload file request recieved /upfile/upload");
 		LinkedList<FileMeta> files = new LinkedList<FileMeta>();
 		Iterator itr = request.getFileNames();
 		MultipartFile mpf = null;
@@ -77,26 +78,20 @@ public class FileuploadController {
 		while (itr.hasNext()) {
 			mpf = request.getFile((String) itr.next());
 			InputStream stream = mpf.getInputStream();
-			System.out.println((new StringBuilder(String.valueOf(mpf.getOriginalFilename()))).append(" uploaded! ").append(files.size()).toString());
+			log.debug("/upfile/upload "+(new StringBuilder(String.valueOf(mpf.getOriginalFilename()))).append(" uploaded! ").append(files.size()).toString());
 			fileMeta = new FileMeta();
 			fileMeta.setFileName(FilenameUtils.getBaseName(mpf.getOriginalFilename()));
 			fileMeta.setFileSize(mpf.getSize() / 1024L);
 			fileMeta.setFileType(mpf.getContentType());
 			fileMeta.setFileExt(FilenameUtils.getExtension(mpf.getOriginalFilename()));
-			//OutputStream out = new FileOutputStream((new StringBuilder(String.valueOf(imgpath))).append(mpf.getOriginalFilename()).toString());
-			//byte buf[] = new byte[1024];
-			//int len;
-			//while ((len = stream.read(buf)) > 0)
-			//	out.write(buf, 0, len);
 			byte[] bytes = IOUtils.toByteArray(stream);
 			String url;
 			try {
 				url = uploadService.uploadFileS3(fileMeta.getFileExt(), mpf.getContentType(), bytes);
-				System.out.println(url);
+				log.debug("/upfile/upload url after uploading to s3 : "+url);
 				fileMeta.setFileName(url);
 			} catch (CommonServiceException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				log.error("/upfile/upload uploading to s3 failed "+e.getMessage());
 			}
 			
 			files.add(fileMeta);
@@ -108,48 +103,25 @@ public class FileuploadController {
 		try {
 			jsonConverter.write(files, jsonMimeType, new ServletServerHttpResponse(response));
 		} catch (HttpMessageNotWritableException e) {
-			e.printStackTrace();
+			log.error("/upfile/upload uploading to s3 failed HttpMessageNotWritableException |"+e.getMessage());
 		} catch (IOException e) {
-			e.printStackTrace();
+			log.error("/upfile/upload uploading to s3 failed IOException |"+e.getMessage());
 		}
 		return null;
 	}
 
-	@RequestMapping(value = "/get/{base}/{ext}", method = RequestMethod.GET)
+	@RequestMapping(value = "/upfile/get/{base}/{ext}", method = RequestMethod.GET)
 	public void get(HttpServletResponse response, @PathVariable String base, @PathVariable String ext) {
+		log.debug("request recieve /upfile/get/"+base+"/"+ext+" ");
 		try {
-			Path source = Paths.get((new StringBuilder(String.valueOf(imgpath))).append(base).append(".").append(ext).toString(), new String[0]);
-			String contType=Files.probeContentType(source);
-			System.out.println(contType);
-			
-			String url = null;
 			InputStream inputStream=null;
 			try {
-				url = uploadService.getSignedUrl(base+"."+ext);
-				if(url.contains("http://")){
-					//its a web url
-					System.out.println("URI: "+url);
-					URI path=new URI(url);
-					System.out.println(path.getPath());
-					inputStream = path.toURL().openStream();
-				}else{
-					//local File
-					System.out.println("URL: "+url);
-					inputStream= new FileInputStream(url);
-				}
+				inputStream = uploadService.getStreamObject(base+"."+ext);
 			} catch (CommonServiceException e) {
-				e.printStackTrace();
+				log.error("request recieve /upfile/get/"+base+"/"+ext+" resulted in error | "+e.getMessage());
 			}
-			
-		       
-			//String contentType = URLConnection.guessContentTypeFromStream(inputStream);
-			//connection.connect();
-			//String contentType = inputStream.getContentType();
-			response.setContentType(contType);
 			response.setHeader("cache-control", "private");
-			response.setHeader("content-type",contType);
 			ServletOutputStream out = response.getOutputStream();
-			//FileInputStream fin = new FileInputStream(url);
 			BufferedInputStream bin = new BufferedInputStream(inputStream);
 			BufferedOutputStream bout = new BufferedOutputStream(out);
 			for (int ch = 0; (ch = bin.read()) != -1;)
@@ -158,19 +130,17 @@ public class FileuploadController {
 			bin.close();
 			bout.close();
 			out.close();
+			log.debug("request served for /upfile/get/"+base+"/"+ext);
 		} catch (IOException e) {
-			e.printStackTrace();
-		} catch (URISyntaxException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			log.error("request recieve /upfile/get/"+base+"/"+ext+" resulted in error | "+e.getMessage());
 		}
 	}
 	
 	
-	@RequestMapping(value = "/normupload", method = RequestMethod.POST)
+	@RequestMapping(value = "/upfile/normupload", method = RequestMethod.POST)
 	@ResponseBody
 	public String uploadNorm(MultipartHttpServletRequest request, HttpServletResponse response) throws IOException, FileUploadException {
-		System.out.println("Upload request recieved for normal");
+		log.debug("request recieved for /normupload ");
 		LinkedList<FileMeta> files = new LinkedList<FileMeta>();
 		Iterator itr = request.getFileNames();
 		MultipartFile mpf = null;
@@ -179,7 +149,7 @@ public class FileuploadController {
 		if (itr.hasNext()) {
 			mpf = request.getFile((String) itr.next());
 			InputStream stream = mpf.getInputStream();
-			System.out.println((new StringBuilder(String.valueOf(mpf.getOriginalFilename()))).append(" uploaded! ").append(files.size()).toString());
+			log.debug("/normupload file recieved "+(new StringBuilder(String.valueOf(mpf.getOriginalFilename()))).append(" ").append(files.size()).toString());
 			fileMeta = new FileMeta();
 			fileMeta.setFileName(FilenameUtils.getBaseName(mpf.getOriginalFilename()));
 			fileMeta.setFileSize(mpf.getSize() / 1024L);
@@ -189,12 +159,11 @@ public class FileuploadController {
 			String url;
 			try {
 				url = uploadService.uploadFileS3(fileMeta.getFileExt(), mpf.getContentType(), bytes);
-				System.out.println(url);
+				log.debug(" /normupload file uploaded successfully to s3 . url |"+url);
 				curl=curl+"service/upfile/get/"+url+"/"+fileMeta.getFileExt();
 				fileMeta.setFileName(url);
 			} catch (CommonServiceException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				log.error("request /normupload resulted in error | "+e.getMessage());
 			}
 			
 			files.add(fileMeta);
@@ -203,15 +172,6 @@ public class FileuploadController {
 		return curl;
 	}
 	
-	
-	public void setImgpath(String imgpath) {
-		this.imgpath = imgpath;
-	}
-
-	public String getImgpath() {
-		return imgpath;
-	}
-
 	public UploadService getUploadService() {
 		return uploadService;
 	}

@@ -7,9 +7,10 @@
     <c:when test="${isblogger eq true }">
       <li><a href="${context_root}/service/mypage?pageno=1&pagesize=6">MyPage</a></li>
       <li><a href="${context_root}/service/write">Write</a></li>
-      <li><a href="${context_root}/service/maintainimg">Upload</a></li>
+      <!--  <li><a href="${context_root}/service/maintainimg">Upload</a></li>-->
       <li class="dropDown"><a href="#">${user.name }</a>
         <ul>
+          <li><a href="<c:url value='/service/passchange'/>">Change Password</a></li>
           <li><a href="<c:url value='/service/logout'/>">logout</a></li>
         </ul></li>
     </c:when>

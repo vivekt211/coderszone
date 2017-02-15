@@ -4,8 +4,19 @@
 <html class="no-js" lang="en">
   
 <head>
-    <%@ include file="title.jsp"%>  
-    <title>CodersZone | About Me</title>
+     <meta charset="utf-8" />
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- Meta Tags -->
+    <meta name="description" content="My name is Vivek Tiwari, I developed coderszone as an enthusiastic programmer. A patform to share,discuss & express tech talks & concepts " />
+    <meta name="author" content="coderszone.in" />
+    <meta name="keywords" content="Coderszone,AboutUs,About Me, Blog, Technology, C++, tutorials, java, spring, python, lua, MVC, data structure, algorithm">
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:type" content="website" />
+    <meta name="robots" content="index"/>
+    <link rel="icon" href="${context_root}/service/resources/img/favicon/favicon.ico" type="image/x-icon" /> 
+    <link rel="shortcut icon" href="${context_root}/service/resources/img/favicon/favicon-32x32.png">
+    <title>CodersZone.in</title>
     <!-- Stylesheets and Fonts-->
     <link href='https://fonts.googleapis.com/css?family=Merriweather:300,400,400italic,700|Oxygen:400,300,700' rel='stylesheet' type='text/css'>
     <link rel="stylesheet" href="/service/resources/base/css/foundation.min.css" />
@@ -72,15 +83,15 @@
 
     <div class="heroWrapper relPosition">
       <!-- Hero Banner Starts -->
-      <div class="heroSmall relPosition" style="background-image: url('/service/resources/img/me.jpg');background-position: 50% 50%;">
+      <div class="heroSmall relPosition" id="picont">
         <div class="row">
           <div class="heroIntro padding horizontalCenter">
             <div class="small-10 medium-8 large-8 columns">
               <h6>About Me</h6>
               <div class="divider"></div>
               <h2>Vivek Kumar Tiwari</h2> 
-              <h4>founder of CodersZone.in</h4>
-              <h4>Lead Engineer with Samsung India Electronics pvt ltd.</h4>
+              <h4>Working as a Staff Product Developer with BMC Softwares</h4>
+              <h4>Worked as Lead Engineer with Samsung India Electronics pvt ltd.</h4>
             </div>
           </div> 
         </div> 
@@ -98,8 +109,8 @@
               <div class="small-12 columns">
                 <h4>About me</h4>
                 <div class="divider"></div>
-                <p>I am Java/Spring Web Application developer .Now I am working as a Lead Engineer with Samsung India. I have been involved in the Design and Development of various enterprise solutions like Cloud Authoring Solution, CMS, Entertainment App Server,Smart TV App Store etc.  </p>
-                <p>The continuous pursuit of technological awareness and expertise in Java/Spring & AWS Cloud related technologies has driven me to the development of this portal. Any Suggestions and feedback is welcome.</p>
+                <p>I am full stack developer with exposure to several backend & front end technologies. Now I am working as a Staff Product Developer with BMC Software. I have been involved in the Design and Development of various enterprise solutions like Infrastructure/application Monitoring tools, plugins , Cloud Authoring Solution, CMS, Entertainment App Server,Smart TV App Store etc.  </p>
+                <p>The continuous pursuit of technological awareness and expertise in various technologies has driven me to the development of this portal. Any Suggestions and feedback is welcome.</p>
 
                 <div class="row">
                   <div class="small-12 medium-4 large-4 columns noPadding">
@@ -132,8 +143,8 @@
               <div class="small-12 small-centered columns content bar">
                 <h4>Contacts</h4>
                 <div class="divider"></div>
-                <p class="smallText">PLease write to me for any suggestion or feedBack.</p>
-                <p class="smallText"><b>linkvivek.vt@gmail.com</b></p>
+                <p class="smallText">Please write to me for any suggestion or feedBack.</p>
+                <p class="smallText"><b>admin@coderszone.in</b></p>
 
               </div>   
             </div>

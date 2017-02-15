@@ -3,6 +3,7 @@ package com.coderszone.common.service.impl;
 import java.io.BufferedOutputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.security.NoSuchAlgorithmException;
 import java.util.Calendar;
@@ -55,6 +56,12 @@ public class UploadServiceLocalImpl implements UploadService {
 		}catch(Exception ex){
 			throw new CommonServiceException("Sorry This call is not meant for local");
 		}
+	}
+
+	@Override
+	public InputStream getStreamObject(String key) throws CommonServiceException {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

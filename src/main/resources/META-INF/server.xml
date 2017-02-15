@@ -24,7 +24,7 @@
 	  removeAbandoned="true"
 	  removeAbandonedTimeout="55"
 	  username="root"
-	  password="1q2w3e"
+	  password="root"
 	  driverClassName="com.mysql.jdbc.Driver"
 	  url="jdbc:mysql://localhost:3306/codersdb?allowMultiQueries=true"
  />

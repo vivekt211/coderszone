@@ -7,8 +7,8 @@
 </head>
 <body>
 	<%
-	    String redirectURL = "http://localhost:8080/service/home";
-	   //String redirectURL = "https://coderszone.in/service/home";
+	    //String redirectURL = "http://localhost:8080/service/home";
+	   String redirectURL = "/service/home";
 	    response.sendRedirect(redirectURL);
 	%>
 </body>

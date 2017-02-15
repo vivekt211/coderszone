@@ -38,5 +38,9 @@ public interface BlogDao {
 
 	Comment getCommentById(int id);
 
+	void deleteComment(int id, String userName);
+
+	void deleteBlog(int id, String userName);
+
 
 }

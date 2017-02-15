@@ -4,8 +4,19 @@
 <html lang="en">
   
 <head>
-     <%@ include file="title.jsp"%>  
-    <title>CodersZone | Home</title>
+     <meta charset="utf-8" />
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- Meta Tags -->
+    <meta name="description" content="Coderszone.in, A place to express your tech knowledge and community to support learning and encouraging open source discussions" />
+    <meta name="author" content="coderszone.in" />
+    <meta name="keywords" content="Coderszone, Blog, Technology, C++, tutorials, java, spring, python, lua, MVC, data structure, algorithm">
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:type" content="website" />
+    <meta name="robots" content="index, follow"/>
+    <link rel="icon" href="${context_root}/service/resources/img/favicon/favicon.ico" type="image/x-icon" /> 
+    <link rel="shortcut icon" href="${context_root}/service/resources/img/favicon/favicon-32x32.png">
+    <title>CodersZone.in</title>
    
     <!-- Stylesheets and Fonts-->
     <link href='https://fonts.googleapis.com/css?family=Merriweather:300,400,400italic,700|Oxygen:400,300,700' rel='stylesheet' type='text/css'>

@@ -38,13 +38,19 @@ public class UserDaoImpl implements UserDao {
 	private String queryForUserByUserId;
 	private String queryForRolesByUserId;
 	private String updatePassword;
+	private String queryForUserByUserIdPass;
 
+	
 	@Override
 	public User loadUserByUsername(String username) {
 		User user = null;
+		try{
 		user = jdbcTemplate.queryForObject(queryForUserByUserId, new Object[] { username }, new UserMapper());
 		List<GrantedAuthority> roleList = jdbcTemplate.query(queryForRolesByUserId, new Object[] { username }, new GrantedAuthorityMapper());
 		user.setAuthorities(roleList);
+		}catch(EmptyResultDataAccessException e){
+			throw new UsernameNotFoundException("User Id not found");
+		}
 		return user;
 
 	}
@@ -71,7 +77,12 @@ public class UserDaoImpl implements UserDao {
 			}
 		});
 	}
-
+	@Override
+	public User loadUserByIdPass(String username,String pass) {
+		User user = null;
+		user = jdbcTemplate.queryForObject(queryForUserByUserIdPass, new Object[] { username,pass }, new UserDetailsMapper());
+		return user;
+	}
 	public String getUpdatePassword() {
 		return updatePassword;
 	}
@@ -94,6 +105,13 @@ public class UserDaoImpl implements UserDao {
 
 	public void setQueryForRolesByUserId(String queryForRolesByUserId) {
 		this.queryForRolesByUserId = queryForRolesByUserId;
+	}
+	public String getQueryForUserByUserIdPass() {
+		return queryForUserByUserIdPass;
+	}
+
+	public void setQueryForUserByUserIdPass(String queryForUserByUserIdPass) {
+		this.queryForUserByUserIdPass = queryForUserByUserIdPass;
 	}
 
 }

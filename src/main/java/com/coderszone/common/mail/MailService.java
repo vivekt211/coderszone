@@ -23,4 +23,6 @@ public interface MailService {
 	void sendVerificationCode(String toId, String code) throws MailServiceException;
 
 	void sendNewPassCode(String toId, String code) throws MailServiceException;
+
+	void sendPasswordChangeAlert(String username)throws MailServiceException;
 }

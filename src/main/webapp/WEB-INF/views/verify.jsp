@@ -3,8 +3,14 @@
 <html class="no-js" lang="en">
 
 <head>
- <%@ include file="title.jsp"%>  
- <title>CodersZone | Register</title>
+   <meta charset="utf-8" />
+   <meta http-equiv="x-ua-compatible" content="ie=edge">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- Meta Tags -->
+   <meta name="robots" content="noindex,nofollow">
+   <link rel="icon" href="${context_root}/service/resources/img/favicon/favicon.ico" type="image/x-icon" /> 
+   <link rel="shortcut icon" href="${context_root}/service/resources/img/favicon/favicon-32x32.png">
+  <title>CodersZone | Register</title>
    
 <!-- Stylesheets and Fonts-->
 <link href='https://fonts.googleapis.com/css?family=Merriweather:300,400,400italic,700|Oxygen:400,300,700' rel='stylesheet' type='text/css'>

@@ -254,27 +254,41 @@
 	.item-block .rght {
 		display: block;
 	}
+	.item-block1 {
+		display: block;
+		padding:20px
+	}
+	.item-block1 .lft {
+		display: block;
+	}
+	.item-block1 .rght {
+		display: block;
+	}
 	.greenBtn {
 		background-color: #14b45a;
 	    cursor: pointer;
 	    border: 1px solid #12ab55;
-	    margin-top: 10px;
+	    margin-top: 20px;
 	    outline: none;
-	    padding: 13px 0 16px 0;
+	    padding: 10px;
 	    width: 100%;
 	    min-width:200px;
 	    text-align: center;
 	    font-size: 15px;
 	    font-family: inherit;
-	    color: #fff;
+	    color: white;
 	    font-weight: bold;
 	}
-	
+	.item-block1 .greenBtn{
+	   padding: 10px;
+	}
 	.greenBtn:active {
 		background-color: rgba(222, 221, 221, 0.64);
+		color:white;
 	}
 	.greenBtn:hover {
 		background-color: green;
+		color:white;
 	}
 	.checktxt{
 	        position: relative;
@@ -293,6 +307,10 @@
 	}
 	.logoc{
 		margin:25px 0px;
+	}
+	#picont{
+	  background-image: url("/service/resources/img/bg_360.jpg");
+	  background-position: 50% 50%;
 	}
 }
 @media only screen and (min-width: 440px) {
@@ -313,6 +331,11 @@
 	    h/eight: 340px;
 	    margin-left: auto;
 	    margin-right: auto;
+	}
+	#picont{
+	  background-image: url("/service/resources/img/bg_360.jpg");
+	  background-position: center top;
+   	  background-size: 100% auto;
 	}
 }
 	
@@ -341,6 +364,14 @@
 	    color: #fff;
 	    font-weight: bold;
 	}
+	.item-block1 .greenBtn{
+	   padding: 10px;
+	}
+	#picont{
+	  background-image: url("/service/resources/img/bg_760.jpg");
+	  background-position: center top;
+   	  background-size: 100% auto;
+	}
 }
 /***normal  setting **/
 .containerwrite {
@@ -357,5 +388,27 @@
 @media only screen and (min-width: 1024px) {
 	.containerwrite{
 		padding-bottom:50px;
+	}
+	#picont{
+	  background-image: url("/service/resources/img/bg_1024.jpg");
+	  background-position: center top;
+   	  background-size: 100% auto;
+	}
+}
+
+@media only screen and (min-width: 1366px) {
+	
+	#picont{
+	  background-image: url("/service/resources/img/bg_1366.jpg");
+	  background-position: center top;
+   	  background-size: 100% auto;
+	}
+}
+@media only screen and (min-width: 1920px) {
+	
+	#picont{
+	  background-image: url("/service/resources/img/bg_1920.jpg");
+	  background-position: center top;
+   	  background-size: 100% auto;
 	}
 }

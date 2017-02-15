@@ -48,14 +48,16 @@ public class LoginController {
 
 	@RequestMapping(method = RequestMethod.GET)
 	public String login(HttpServletRequest request, Model model) {
-		System.out.println("hi login ***************");
+		
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 		String name = auth.getName();
 		Collection<GrantedAuthority> authri = (Collection<GrantedAuthority>) auth.getAuthorities();
 		User u=null;
 		try {
+			log.debug("Login Request : UserName : "+name);
 			u = userCustomService.loadUserById(name);
 		} catch (UserNotRegisteredException e1) {
+			log.error("Login Request : UserName : "+name+" UserName not found | "+e1.getMessage());
 			model.addAttribute("message", e1.getMessage());
 			StringWriter sw = new StringWriter();
 			PrintWriter pw = new PrintWriter(sw);
@@ -64,7 +66,7 @@ public class LoginController {
 			return "error";
 		}
 		if (u.getIsVerified() == 0) {
-			//model.addAttribute("cd", u.getVerificationKey());
+			log.debug("Login Request : UserName : "+name+" UserName is not verified | ");
 			model.addAttribute("id", u.getId());
 			return "verify";
 		}else {
@@ -73,8 +75,7 @@ public class LoginController {
 			boolean isBlogger = false;
 			while (it.hasNext()) {
 				String role = ((GrantedAuthority) it.next()).getAuthority();
-				System.out.println("Role" + role);
-
+				log.debug("Login Request : UserName : "+name+" has role "+role);
 				if (role.equalsIgnoreCase(Constants.ROLE_ADMIN) || role.equalsIgnoreCase(Constants.ROLE_SUPER_ADMIN)) {
 					isAdmin = true;
 				} else if (role.equalsIgnoreCase(Constants.ROLE_BLOGGER)) {
@@ -83,14 +84,17 @@ public class LoginController {
 			}
 			if (isAdmin) {
 				UserDetails user = (UserDetails) auth.getPrincipal();
-				System.out.println("LoginController: Admin Login" + user.getUsername());
+				log.debug("Login Request : UserName : "+name+" is an admin user ");
 				model.addAttribute("user", user);
 				model.addAttribute("isblogger", true);
 				request.getSession().setAttribute("isblogger", true);
+				model.addAttribute("isadmin", true);
+				request.getSession().setAttribute("isadmin", true);
 				Page<Blog> blogPage;
 				try {
 					blogPage = blogService.getAllBlogsByUserId(((UserDetails) user).getUsername(), 1, 9);
 				} catch (DataBaseAccessException e) {
+					log.error("Login Request : getting all blogs for this user resulted in error | "+ e.getMessage());
 					model.addAttribute("message", e.getMessage());
 					StringWriter sw = new StringWriter();
 					PrintWriter pw = new PrintWriter(sw);
@@ -102,14 +106,18 @@ public class LoginController {
 				return "mypage";
 			} else if (isBlogger) {
 				UserDetails user = (UserDetails) auth.getPrincipal();
-				System.out.println("LoginController: Blogger login" + user.getUsername());
+				log.debug("Login Request : UserName : "+name+" is a blogger user ");
 				model.addAttribute("user", user);
 				model.addAttribute("isblogger", true);
 				request.getSession().setAttribute("isblogger", true);
+				model.addAttribute("isadmin", false);
+				request.getSession().setAttribute("isadmin", false);
+				
 				Page<Blog> blogPage;
 				try {
 					blogPage = blogService.getAllBlogsByUserId(((UserDetails) user).getUsername(), 1, 9);
 				} catch (DataBaseAccessException e) {
+					log.error("Login Request : getting all blogs for "+((UserDetails) user).getUsername()+" user resulted in error | "+ e.getMessage());
 					model.addAttribute("message", e.getMessage());
 					StringWriter sw = new StringWriter();
 					PrintWriter pw = new PrintWriter(sw);
@@ -120,6 +128,7 @@ public class LoginController {
 				model.addAttribute("blogPage", blogPage);
 				return "mypage";
 			} else {
+				log.error("Login Request : user has no valid roles  ");
 				model.addAttribute("isblogger", false);
 				return "login";
 			}

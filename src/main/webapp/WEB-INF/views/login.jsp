@@ -6,8 +6,16 @@
 <html class="no-js" lang="en">
 
 <head>
- <%@ include file="title.jsp"%>  
-  <title>CodersZone | login</title>
+  <meta charset="utf-8" />
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- Meta Tags -->
+    <meta name="description" content="Login to CodersZone.in and start writing your tech blogs. The blogs focused on learning and helping open source community" />
+    <meta name="author" content="coderszone.in" />
+    <meta name="keywords" content="Coderszone Login join signin">
+    <link rel="icon" href="${context_root}/service/resources/img/favicon/favicon.ico" type="image/x-icon" /> 
+    <link rel="shortcut icon" href="${context_root}/service/resources/img/favicon/favicon-32x32.png">
+     <title>CodersZone | login</title>
    
 <!-- Stylesheets and Fonts-->
 <link href='https://fonts.googleapis.com/css?family=Merriweather:300,400,400italic,700|Oxygen:400,300,700' rel='stylesheet' type='text/css'>
@@ -23,6 +31,9 @@
 
 <!-- Scripts -->
 <script src="/service/resources/base/js/vendor/jquery.min.js"></script>
+
+    <script type="text/javascript" src="/service/resources/js/jquery.noty.packaged.js"></script>
+    <script type="text/javascript" src="/service/resources/js/notice.js"></script>
 <!--[if IE]>
       <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
     <![endif]-->
@@ -126,17 +137,38 @@
 
   <script>
       $(document).on('ready', function() {
-        /* var video = document.getElementById("heroVideo");
-        video.addEventListener("canplay", function() {
-          video.play();
-        }); */
 
         $("#regbtn").click(function() {
           //Alert ajax call to register
           window.location.href = "/service/registration";
         });
-        $("#loginbtn").click(function() {
-          $("#loginform").submit();
+        function valid(){
+          var email=$("#userid").val();
+          var pass=$("#password").val();
+          if(email.trim()==''  ){
+        		notify("error","UserId cannot be empty");
+        		return false;
+          }
+          if(pass.trim()==''  ){
+        		notify("error","Password cannot be empty");
+        		return false;
+          }
+          if (/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(email)) {
+              return true;
+          }else{
+              notify('error',"Please Enter a valid User Id");
+              return false;
+          }
+        }
+        $("#loginbtn").click(function(){
+          if(valid()){
+            $("#loginform").submit();
+          }
+        });
+        $("#password").keyup(function(event){
+          if(event.keyCode == 13){
+              $("#loginbtn").click();
+          }
         });
       });
     </script>

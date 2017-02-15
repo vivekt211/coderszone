@@ -5,7 +5,13 @@
 <html class="no-js" lang="en">
   
 <head>
-     <%@ include file="title.jsp"%>  
+    <meta charset="utf-8" />
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- Meta Tags -->
+    <meta name="robots" content="noindex,nofollow">
+    <link rel="icon" href="${context_root}/service/resources/img/favicon/favicon.ico" type="image/x-icon" /> 
+    <link rel="shortcut icon" href="${context_root}/service/resources/img/favicon/favicon-32x32.png">
     <title>CodersZone | Write Blog</title>
     <!-- Stylesheets and Fonts-->
     <link href='https://fonts.googleapis.com/css?family=Merriweather:300,400,400italic,700|Oxygen:400,300,700' rel='stylesheet' type='text/css'>
@@ -28,11 +34,14 @@
     <!-- Scripts -->
    <script src="/service/resources/base/js/jquery.js"></script> 
   <script src="/service/resources/base/js/bootstrap.js"></script> 
-  <link href="http://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.2/summernote.css" rel="stylesheet">
-  <script src="http://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.2/summernote.js"></script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.2/summernote.css" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.2/summernote.js"></script>
     <!--[if IE]>
-      <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+      <script src="https://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
     <![endif]-->
+    <script type="text/javascript" src="/service/resources/js/jquery.noty.packaged.js"></script>
+    <script type="text/javascript" src="/service/resources/js/notice.js"></script>
+    
   </head>
   <body class="fullWidth">
 
@@ -102,7 +111,7 @@
       <textarea class="row stretched clearfix margin10" id="heading" name="heading" placeholder="Please Enter Blog title [max 10 words]"></textarea>
       <label class="lblwrt margin10">Please Enter Blog Description [Max 40 words]</label>
       <textarea class="row stretched clearfix margin10" id="desc" name="desc" placeholder="Please Enter Blog Description [Max 40 words]"></textarea>
-      <label class="lblwrt margin10">Please Enter comma separated keywords (This will help in searching)</label>
+      <label class="lblwrt margin10">Please Enter comma seperated keywords (This will help in searching)</label>
        <textarea class="row stretched clearfix margin10" id="keywords" name="keywords" placeholder="Please Enter comma separated Tags (This will help in searching)"></textarea> 
       <label class="lblwrt margin10">Select tag(Category)</label>
       <select id="tags" class="row stretched" name="tags" >
@@ -135,14 +144,16 @@
     <script src="/service/resources/base/js/plugins.js"></script>
     <script src="/service/resources/base/js/foundation.min.js"></script>
     <script src="/service/resources/base/js/functions.js"></script>
+    <script type="text/javascript" src="/service/resources/js/jquery.noty.packaged.js"></script>
+    <script type="text/javascript" src="/service/resources/js/notice.js"></script>
       
     <script type="text/javascript">
      
 	    function sendFile(file,editor,welEditable) {
 	        data = new FormData();
 	        data.append("file", file);
-	        console.log('image upload:', file, editor, welEditable);
-	        console.log(data);
+	        //console.log('image upload:', file, editor, welEditable);
+	        //console.log(data);
 	        $.ajax({
 	            data: data,
 	            type: "POST",
@@ -155,9 +166,7 @@
 	            },
 	            error:  function(jqXHR, textStatus, errorThrown)
 	            {
-	                // Handle errors here
-	               alert('ERRORS: ' + textStatus);
-	                // STOP LOADING SPINNER
+	              notify("error",textStatus+": Automatic Image upload failed");
 	            }
 	        });
 	      }
@@ -169,7 +178,19 @@
 	            }
             }
         });
-         
+         function valid(){
+           var title = $("#heading").val();
+           var desc =  $("#desc").val();
+           var tags =  $("#tags").val();
+           var keywords = $("#keywords").val();
+           var htm =  $(".note-editable").html();
+           
+           if(title == '' ||desc == '' ||tags ==''||keywords==''||htm==''){
+             notify("error","Please fill all the fields, Its important for your post visibility");
+             return false;
+           }
+           return true;
+         }
         $("#postbtn").click(function(){
           
            var title = $("#heading").val();
@@ -178,16 +199,20 @@
            var keywords = $("#keywords").val();
            var htm =  $(".note-editable").html();
            var data= '&keywords='+encodeURIComponent(keywords)+'&title='+encodeURIComponent(title)+"&desc="+encodeURIComponent(desc)+"&tags="+encodeURIComponent(tags)+"&content="+encodeURIComponent(htm);
-           $.ajax({
-             url: '/service/postblog',
-             type: 'POST',
-             data: data,
-             success: function(result) {
-               alert(result.message);
-               window.location.replace("/service/mypage");
-             }
-           });
-
+           if(valid()){
+             $.ajax({
+               url: '/service/postblog',
+               type: 'POST',
+               data: data,
+               success: function(result) {
+                 notifyGoMyPage("success",result.message);
+               },
+               error:function(jqXHR, textStatus, errorThrown)
+ 	            {
+ 	              notify("error",textStatus+": Post failed");
+ 	            }
+             });
+           }
         });
      </script>
   </body>

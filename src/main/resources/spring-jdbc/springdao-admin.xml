@@ -23,18 +23,20 @@ http://www.springframework.org/schema/beans/spring-beans.xsd">
 		<property name="getBlogTags" value="SELECT t.name FROM codersdb.blog_tags_map btm 
 											LEFT JOIN codersdb.tags t ON btm.tag_id=t.id where btm.blog_id=? ;"/>
 		<property name="getAllTags" value="Select name from codersdb.tags;"/>
-		<property name="getAllBlogSizeByKeyword" value="SELECT count(*) FROM codersdb.blog where title like ? OR description like ? OR content like ? ;"/>
+		<property name="getAllBlogSizeByKeyword" value="SELECT count(*) FROM codersdb.blog where title like ? OR description like ? OR content like ? and deleted='0';"/>
 		<property name="getAllBlogByKeyword" value="SELECT bl.*,t.name tagName FROM codersdb.blog bl left join codersdb.blog_tags_map btm ON bl.id=btm.blog_id
-														LEFT JOIN codersdb.tags t ON btm.tag_id=t.id where bl.title like ? OR bl.description like ? OR bl.content like ?  ORDER BY bl.mod_date DESC LIMIT ?,?;"/>
-		<property name="getAllBlogSize" value="SELECT count(*) FROM codersdb.blog;"/>
+														LEFT JOIN codersdb.tags t ON btm.tag_id=t.id where bl.title like ? OR bl.description like ? OR bl.content like ? and bl.deleted='0' ORDER BY bl.mod_date DESC LIMIT ?,?;"/>
+		<property name="getAllBlogSize" value="SELECT count(*) FROM codersdb.blog Where deleted='0';"/>
 		<property name="getAllBlog" value="SELECT bl.*,t.name tagName FROM codersdb.blog bl left join codersdb.blog_tags_map btm ON bl.id=btm.blog_id
-														LEFT JOIN codersdb.tags t ON btm.tag_id=t.id ORDER BY bl.mod_date DESC LIMIT ?,?;"/>
-		<property name="getAllBlogSizeByUserID" value="SELECT count(*) FROM codersdb.blog where created_by=?;"/>
+														LEFT JOIN codersdb.tags t ON btm.tag_id=t.id WHERE bl.deleted='0' ORDER BY bl.mod_date DESC LIMIT ?,?;"/>
+		<property name="getAllBlogSizeByUserID" value="SELECT count(*) FROM codersdb.blog where created_by=? and deleted='0';"/>
 		<property name="getAllBlogByUSerID" value="SELECT bl.*,t.name tagName FROM codersdb.blog bl left join codersdb.blog_tags_map btm ON bl.id=btm.blog_id
-														LEFT JOIN codersdb.tags t ON btm.tag_id=t.id Where bl.created_by = ? ORDER BY bl.mod_date DESC LIMIT ?,?;"/>
-	    <property name="getAllCommentsByBlogId" value="SELECT * FROM codersdb.comment where blog_id=?;"/>
+														LEFT JOIN codersdb.tags t ON btm.tag_id=t.id Where bl.created_by = ? and bl.deleted='0' ORDER BY bl.mod_date DESC LIMIT ?,?;"/>
+	    <property name="getAllCommentsByBlogId" value="SELECT * FROM codersdb.comment where blog_id=? and deleted='0';"/>
 	    <property name="insertComment" value="INSERT INTO codersdb.comment (date_time, name, email, content, blog_id) VALUES (?, ?, ?, ?, ?);"/>
-	    <property name="getCommentById" value="SELECT * FROM codersdb.comment where id=?;"/>
+	    <property name="getCommentById" value="SELECT * FROM codersdb.comment where id=? and deleted='0';"/>
+	    <property name="deleteBlog" value="UPDATE codersdb.blog SET mod_by=?, mod_date=?, deleted=? WHERE id=?;"/>
+	    <property name="deleteComment" value="UPDATE codersdb.comment SET date_time=?, deleted=? WHERE id=?;"/>
 	</bean>
 
 </beans>

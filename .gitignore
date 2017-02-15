@@ -5,3 +5,4 @@
 .settings/*
 target/*
 src/main/resources/app.properties
+/target/

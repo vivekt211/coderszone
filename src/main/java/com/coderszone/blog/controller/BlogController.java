@@ -1,8 +1,11 @@
 package com.coderszone.blog.controller;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
@@ -16,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.coderszone.authentication.controller.LoginController;
 import com.coderszone.authentication.model.User;
 import com.coderszone.blog.model.Blog;
 import com.coderszone.blog.model.Comment;
@@ -32,6 +36,8 @@ import com.coderszone.common.exception.UserNotRegisteredException;
 @Controller
 public class BlogController{
 
+	static Logger log = Logger.getLogger(BlogController.class.getName());
+
 	@Autowired
 	private BlogService blogService;
 	
@@ -43,7 +49,9 @@ public class BlogController{
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 		ResponseModel<Blog> res=new ResponseModel<Blog>();
 		try {
+			
 			UserDetails user=(UserDetails) auth.getPrincipal();
+			log.debug("request recieved for /postblog by "+user.getUsername()+" blog is "+blog.getTitle());
 			blog.setCreatedBy(user.getUsername());
 			blog.setCreatedDate(DateUtil.utilToString(new Date()));
 			blog.setModBy(user.getUsername());
@@ -51,14 +59,12 @@ public class BlogController{
 			int id=blogService.createBlog(blog);
 			res.setResponseCode(Constants.RESPONSE_OK);
 			res.setMessage("Thank you ! your post has been submitted ");
-			/*Blog blog1=blogService.getBlog(id);
-			List<String> tagsList=blogService.getAlltags();
-			model.addAttribute("blog",blog1);
-			model.addAttribute("tagsList",tagsList);
-		*/
+			
 		} catch (DataBaseAccessException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			log.error("request /postblog resulted in error "+e.getMessage());
+			res.setResponseCode(Constants.RESPONSE_FAILED);
+			res.setMessage(e.getMessage());
+			res.setData(null);
 		}
 		return res;
 	}
@@ -69,9 +75,10 @@ public class BlogController{
 		Object user= auth.getPrincipal();
 		if(user instanceof User){
 			model.addAttribute("username",((UserDetails) user).getUsername());
+			log.debug("request recieved for /detail from user "+((UserDetails) user).getUsername());
 			model.addAttribute("user",((User) user));
 		}else{
-			//do nothing
+			log.debug("request recieved for /detail from anonymous user ");
 		}
 		try {
 			Blog blog=blogService.getBlog(id);
@@ -79,8 +86,13 @@ public class BlogController{
 			model.addAttribute("blog",blog);
 			model.addAttribute("tagsList",tagsList);
 		} catch (DataBaseAccessException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			log.error("request /detail resulted in error "+e.getMessage());
+			model.addAttribute("message", e.getMessage());
+			StringWriter sw = new StringWriter();
+			PrintWriter pw = new PrintWriter(sw);
+			e.printStackTrace(pw);
+			model.addAttribute("trace", sw.toString());
+			return "error";
 		}
 		model.addAttribute("context_root",CONTEXT_ROOT);
 		return "details";
@@ -92,18 +104,28 @@ public class BlogController{
 		Object user= auth.getPrincipal();
 		if(user instanceof User){
 			model.addAttribute("username",((UserDetails) user).getUsername());
+			log.debug("request recieved for /getupdate?id="+id+" from user "+((UserDetails) user).getUsername());
 			model.addAttribute("user",((User) user));
 		}else{
-			//do nothing
-		}
+			log.error("request recieved for /getupdate?id="+id+" from anonymous user ");
+			model.addAttribute("message", "You are not loggedin please login");
+			StringWriter sw = new StringWriter();
+			model.addAttribute("trace", sw.toString());
+			return "error";
+	    }
 		try {
 			Blog blog=blogService.getBlog(id);
 			List<String> tagsList=blogService.getAlltags();
 			model.addAttribute("blog",blog);
 			model.addAttribute("tagsList",tagsList);
 		} catch (DataBaseAccessException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			log.error("request /getupdate?id="+id+" resulted in error "+e.getMessage());
+			model.addAttribute("message", e.getMessage());
+			StringWriter sw = new StringWriter();
+			PrintWriter pw = new PrintWriter(sw);
+			e.printStackTrace(pw);
+			model.addAttribute("trace", sw.toString());
+			return "error";
 		}
 		model.addAttribute("context_root",CONTEXT_ROOT);
 		return "update";
@@ -115,6 +137,7 @@ public class BlogController{
 		ResponseModel<Blog> res=new ResponseModel<Blog>();
 		try {
 			UserDetails user=(UserDetails) auth.getPrincipal();
+			log.debug("request recieved for /updateblog?id="+blog.getId()+" from user "+((UserDetails) user).getUsername());
 			blog.setCreatedBy(user.getUsername());
 			blog.setCreatedDate(DateUtil.utilToString(new Date()));
 			blog.setModBy(user.getUsername());
@@ -125,8 +148,10 @@ public class BlogController{
 			res.setData(null);
 		
 		} catch (DataBaseAccessException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			log.error("request /updateblog?id="+blog.getId()+" resulted in error "+e.getMessage());
+			res.setResponseCode(Constants.RESPONSE_FAILED);
+			res.setMessage(e.getMessage());
+			res.setData(null);
 		}
 		return res;
 	}
@@ -142,7 +167,6 @@ public class BlogController{
 			res.setData(commentList);
 		
 		} catch (DataBaseAccessException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 			res.setResponseCode(Constants.RESPONSE_FAILED);
 			res.setMessage("There is database exception ");
@@ -156,36 +180,78 @@ public class BlogController{
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 		ResponseModel<Comment> res=new ResponseModel<Comment>();
 		try {
+			UserDetails user=(UserDetails) auth.getPrincipal();
+			log.debug("request recieved for /postcomment from user "+((UserDetails) user).getUsername());
 			Comment comment=blogService.postComments(commentParam);
 			res.setResponseCode(Constants.RESPONSE_OK);
 			res.setMessage("");
 			res.setData(comment);
 		
 		} catch (DataBaseAccessException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			log.error("request /postcomment resulted in error "+e.getMessage());
+			res.setResponseCode(Constants.RESPONSE_FAILED);
+			res.setMessage(e.getMessage());
+			res.setData(null);
+		}
+		return res;
+	}
+	@RequestMapping(value="/delpost", method=RequestMethod.GET)
+	public @ResponseBody ResponseModel<String> delPost(@RequestParam int id,Model model) {
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+		ResponseModel<String> res=new ResponseModel<String>();
+		try {
+			UserDetails user=(UserDetails) auth.getPrincipal();
+			log.debug("request recieved for /delpost from user "+((UserDetails) user).getUsername());
+			blogService.deleteBlog(id,user.getUsername());
+			res.setResponseCode(Constants.RESPONSE_OK);
+			res.setMessage("Thank you ! The post has been deleted ! ");
+			res.setData(null);
+		} catch (DataBaseAccessException e) {
+			log.error("request /delpost resulted in error "+e.getMessage());
+			res.setResponseCode(Constants.RESPONSE_FAILED);
+			res.setMessage(e.getMessage());
+			res.setData(null);
+		}
+		return res;
+	}
+	@RequestMapping(value="/delcomment", method=RequestMethod.GET)
+	public @ResponseBody ResponseModel<String> delComment(@RequestParam int id,Model model) {
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+		ResponseModel<String> res=new ResponseModel<String>();
+		try {
+			UserDetails user=(UserDetails) auth.getPrincipal();
+			log.debug("request recieved for /delcomment from user "+((UserDetails) user).getUsername());
+			blogService.deleteComment(id,user.getUsername());
+			res.setResponseCode(Constants.RESPONSE_OK);
+			res.setMessage("Thank you ! The comment has been deleted ! ");
+			res.setData(null);
+		} catch (DataBaseAccessException e) {
+			log.error("request /delpost resulted in error "+e.getMessage());
 			res.setResponseCode(Constants.RESPONSE_FAILED);
 			res.setMessage("There is database exception ");
 			res.setData(null);
 		}
 		return res;
 	}
-
 	@RequestMapping(value="/newpass",method = RequestMethod.GET)
 	public @ResponseBody ResponseModel<String> getNewPass(@RequestParam String id,Model model) {
 		ResponseModel<String> res=new ResponseModel<String>();
 		try {
+			log.debug("request recieved for /newpass  for "+id);
 			blogService.createNewPassword(id);
 			res.setResponseCode(Constants.RESPONSE_OK);
 			res.setMessage("Thank you ! Your new password has been send to you. Please check your mail ");
 		} catch (DataBaseAccessException e) {
+			log.error("request /newpass resulted in error "+e.getMessage());
 			res.setResponseCode(Constants.RESPONSE_FAILED);
 			res.setMessage("Sorry ! Something went horribly wrong. I will fix it. please give me some time ! ");
 			e.printStackTrace();
 		} catch (UserNotRegisteredException e) {
+			log.error("request /newpass resulted in error "+e.getMessage());
 			res.setResponseCode(Constants.RESPONSE_FAILED);
 			res.setMessage("Sorry ! The user doesnot seems to be registered . ");
 		} catch (MailServiceException e) {
+			log.error("request /newpass resulted in error "+e.getMessage());
 			res.setResponseCode(Constants.RESPONSE_FAILED);
 			res.setMessage("Sorry ! We are experiencing problem in mail service, The new password could not be sent. ");
 		}

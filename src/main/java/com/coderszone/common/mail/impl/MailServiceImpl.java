@@ -15,18 +15,22 @@ import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.coderszone.common.beans.MailMessage;
+import com.coderszone.common.controller.FileuploadController;
 import com.coderszone.common.exception.MailServiceException;
 import com.coderszone.common.mail.MailService;
 
 @Service("mailService")
 @Transactional
 public class MailServiceImpl implements MailService{
+	static Logger log = Logger.getLogger(MailServiceImpl.class.getName());
+
 	@Value("${mail.smtpserver}")
 	private String SMTP_HOST_NAME;
 	@Value("${mail.userid}")
@@ -45,6 +49,7 @@ public class MailServiceImpl implements MailService{
 	
 	@Override
     public void sendVerificationCode(String toId,String code) throws MailServiceException{
+		log.debug("sendVerificationCode to="+toId+", code="+code);
         Properties props = new Properties();
 		props.put("mail.smtp.host", SMTP_HOST_NAME);
 		props.put("mail.smtp.socketFactory.port", PORT);
@@ -65,7 +70,7 @@ public class MailServiceImpl implements MailService{
 			Message message = new MimeMessage(session);
 			message.setFrom(new InternetAddress(FROM));
 			message.setRecipients(Message.RecipientType.TO,	InternetAddress.parse(toId));
-			message.setSubject("CodersZone Registration Code");
+			message.setSubject("Welcome ! Your CodersZone Registration Code");
 			message.setContent("<p style=\"text-align:center\"><u><font color=\"#e76363\" face=\"Times New Roman\" style=\"font-size: 2.5rem; font-weight: 700; line-height: 1;\">Coders</font><font face=\"Impact\" color=\"#6ba54a\" style=\"font-size: 2.5rem; font-weight: 700; line-height: 1;\">Zone</font><font color=\"#6ba54a\" style=\"font-family: Oxygen, sans-serif; font-size: 2.5rem; font-weight: 700; line-height: 1;\">.<font face=\"Comic Sans MS\">in</font></font></u></p>" +
 					"<h3 style=\"text-align:center\">Welcome to the <b>CodersZone </b>community.</h3>" +
 					"<p style=\"text-align: center;\">Please Enter the blow verification code</p>" +
@@ -81,16 +86,17 @@ public class MailServiceImpl implements MailService{
 					,"text/html");
 
 			Transport.send(message);
-
-			System.out.println("Done");
+			log.debug("sendVerificationCode to="+toId+", code="+code+" COMPLETED ");
 
 		} catch (MessagingException e) {
+			log.error("sendVerificationCode to="+toId+", code="+code+" FAILED | "+e.getMessage());
 			throw new MailServiceException(e);
 		}
     }
 
 	@Override
     public void sendNewPassCode(String toId,String code) throws MailServiceException{
+		log.debug("sendNewPassCode to="+toId+", code="+code);
         Properties props = new Properties();
 		props.put("mail.smtp.host", SMTP_HOST_NAME);
 		props.put("mail.smtp.socketFactory.port", PORT);
@@ -126,8 +132,51 @@ public class MailServiceImpl implements MailService{
 					,"text/html");
 
 			Transport.send(message);
-
+			log.debug("sendNewPassCode to="+toId+", code="+code+" COMPLETED ");
 		} catch (MessagingException e) {
+			log.error("sendNewPassCode to="+toId+", code="+code+" FAILED | "+e.getMessage());
+			throw new MailServiceException(e);
+		}
+    }
+	
+	@Override
+    public void sendPasswordChangeAlert(String toId) throws MailServiceException{
+		log.debug("sendPasswordChangeAlert to="+toId);
+        Properties props = new Properties();
+		props.put("mail.smtp.host", SMTP_HOST_NAME);
+		props.put("mail.smtp.socketFactory.port", PORT);
+		props.put("mail.smtp.socketFactory.class",SMTP_SOCKETFACTORY_CLASS);
+		props.put("mail.smtp.auth", "true");
+		props.put("mail.smtp.port", PORT);
+		
+		Session session = Session.getDefaultInstance(props,
+				new javax.mail.Authenticator() {
+					protected PasswordAuthentication getPasswordAuthentication() {
+						return new PasswordAuthentication(SMTP_AUTH_USER,SMTP_AUTH_PWD);
+					}
+				});
+        // uncomment for debugging infos to stdout
+        // mailSession.setDebug(true);
+		try {
+
+			Message message = new MimeMessage(session);
+			message.setFrom(new InternetAddress(FROM));
+			message.setRecipients(Message.RecipientType.TO,	InternetAddress.parse(toId));
+			message.setSubject("CodersZone Password has been changed");
+			message.setContent("<p style=\"text-align:center\"><u><font color=\"#e76363\" face=\"Times New Roman\" style=\"font-size: 2.5rem; font-weight: 700; line-height: 1;\">Coders</font><font face=\"Impact\" color=\"#6ba54a\" style=\"font-size: 2.5rem; font-weight: 700; line-height: 1;\">Zone</font><font color=\"#6ba54a\" style=\"font-family: Oxygen, sans-serif; font-size: 2.5rem; font-weight: 700; line-height: 1;\">.<font face=\"Comic Sans MS\">in</font></font></u></p>" +
+					"<h3 style=\"text-align:center\">Welcome to the <b>CodersZone </b>community.</h3>" +
+					"<p style=\"text-align: center;\">Your password has been change</p>" +
+					"<p style=\"text-align: center;\"><br></p><p style=\"text-align: center;\"><font color=\"#311873\" style=\"background-color: rgb(255, 255, 255);\">" +
+					"If its not you then please goto forget password link and reset your password" +
+					"</font></p><hr><p style=\"text-align: center;\"><font color=\"#cec6ce\">" +
+					"</font></p><p style=\"text-align:center\">" +
+					"</p>"
+					,"text/html");
+
+			Transport.send(message);
+			log.debug("sendPasswordChangeAlert to="+toId+" COMPLETED ");
+		} catch (MessagingException e) {
+			log.error("sendPasswordChangeAlert to="+toId+" FAILED | "+e.getMessage());
 			throw new MailServiceException(e);
 		}
     }

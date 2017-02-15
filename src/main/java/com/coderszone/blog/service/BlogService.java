@@ -30,4 +30,8 @@ public interface BlogService {
 
 	void createNewPassword(String id) throws DataBaseAccessException, UserNotRegisteredException, MailServiceException;
 
+	void deleteBlog(int id, String username) throws DataBaseAccessException;
+
+	void deleteComment(int id,String username) throws DataBaseAccessException;
+
 }

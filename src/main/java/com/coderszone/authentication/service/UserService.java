@@ -26,6 +26,7 @@ public class UserService implements UserDetailsService {
     public User loadUserByUsername(final String username) throws UsernameNotFoundException {
         return userDao.loadUserByUsername(username);
     }
-    
+
+	
   
 }

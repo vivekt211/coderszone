@@ -5,8 +5,14 @@
 <html class="no-js" lang="en">
   
 <head>
-    <%@ include file="title.jsp"%>  
-    <title>CodersZone | Update Blog</title>
+      <meta charset="utf-8" />
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- Meta Tags -->
+    <meta name="robots" content="noindex,nofollow">
+    <link rel="icon" href="${context_root}/service/resources/img/favicon/favicon.ico" type="image/x-icon" /> 
+    <link rel="shortcut icon" href="${context_root}/service/resources/img/favicon/favicon-32x32.png">
+     <title>CodersZone | Update Blog</title>
    
     <!-- Stylesheets and Fonts-->
     <link href='https://fonts.googleapis.com/css?family=Merriweather:300,400,400italic,700|Oxygen:400,300,700' rel='stylesheet' type='text/css'>
@@ -28,10 +34,10 @@
     <!-- Scripts -->
    <script src="/service/resources/base/js/jquery.js"></script> 
   <script src="/service/resources/base/js/bootstrap.js"></script> 
-   <link href="http://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.2/summernote.css" rel="stylesheet">
-  <script src="http://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.2/summernote.js"></script>
+   <link href="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.2/summernote.css" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.2/summernote.js"></script>
     <!--[if IE]>
-      <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+      <script src="https://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
     <![endif]-->
   </head>
   <body class="fullWidth">

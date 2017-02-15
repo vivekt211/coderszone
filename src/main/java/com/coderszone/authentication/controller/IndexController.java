@@ -8,6 +8,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.coderszone.blog.model.Blog;
 import com.coderszone.common.Constants;
@@ -38,5 +39,10 @@ public class IndexController {
 	public String out(Model model) {
 		model.addAttribute("message","Your session has been timed out please login again!");
 		return "login";
+	}
+	
+	@RequestMapping(value = "/healthcheck", method = RequestMethod.GET)
+	public @ResponseBody String health(Model model) {
+		return "success";
 	}
 }

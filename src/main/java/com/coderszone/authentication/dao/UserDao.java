@@ -12,4 +12,6 @@ public interface UserDao {
 
 	void updateUserPassword(String id, String password);
 
+	User loadUserByIdPass(String userId, String cpassword);
+
 }

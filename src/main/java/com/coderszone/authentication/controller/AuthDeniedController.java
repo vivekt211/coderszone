@@ -12,7 +12,7 @@ public class AuthDeniedController {
 	
 	@RequestMapping(value="/denied",method = RequestMethod.GET)
 	public String denied(Model model) {
-		return "index";
+		return "index?access=denied";
 	}
 
 }

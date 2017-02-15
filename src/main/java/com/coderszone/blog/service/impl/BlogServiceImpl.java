@@ -3,6 +3,7 @@ package com.coderszone.blog.service.impl;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -12,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.coderszone.authentication.dao.UserDao;
 import com.coderszone.authentication.model.User;
+import com.coderszone.blog.controller.BlogController;
 import com.coderszone.blog.dao.BlogDao;
 import com.coderszone.blog.model.Blog;
 import com.coderszone.blog.model.Comment;
@@ -27,6 +29,8 @@ import com.coderszone.common.pageutil.Page;
 @Service
 @Transactional(propagation=Propagation.SUPPORTS, readOnly=true)
 public class BlogServiceImpl implements BlogService {
+
+	static Logger log = Logger.getLogger(BlogServiceImpl.class.getName());
 
 	@Autowired
 	private BlogDao blogDao;
@@ -45,7 +49,6 @@ public class BlogServiceImpl implements BlogService {
 			blog.setTags(blogDao.getBlogTags(id));
 			return blog;
 		} catch (DataAccessException ex) {
-			ex.printStackTrace();
 			throw new DataBaseAccessException("Sorry DataBase access has some problem");
 		}
 	}
@@ -54,7 +57,6 @@ public class BlogServiceImpl implements BlogService {
 		try {
 			return blogDao.getAlltags();
 		} catch (DataAccessException ex) {
-			ex.printStackTrace();
 			throw new DataBaseAccessException("Sorry DataBase access has some problem");
 		}
 	}
@@ -69,7 +71,6 @@ public class BlogServiceImpl implements BlogService {
 			blogDao.insertTagMap(id, blog.getTags(), tagMap);
 
 		} catch (DataAccessException ex) {
-			ex.printStackTrace();
 			throw new DataBaseAccessException("Sorry DataBase access has some problem");
 		}
 		return id;
@@ -84,7 +85,6 @@ public class BlogServiceImpl implements BlogService {
 			blogDao.deleteTagMap(blog.getId());
 			blogDao.insertTagMap(blog.getId(), blog.getTags(), tagMap);
 		} catch (DataAccessException ex) {
-			ex.printStackTrace();
 			throw new DataBaseAccessException("Sorry DataBase access has some problem");
 		}
 	}
@@ -93,7 +93,6 @@ public class BlogServiceImpl implements BlogService {
 		try{
 			return blogDao.getAllBlogsBykeyWord(keyword,pageNo, pageSize);
 		}catch(DataAccessException ex){
-			ex.printStackTrace();
 			throw new DataBaseAccessException("Sorry DataBase access has some problem");
 		}
 	}
@@ -103,7 +102,6 @@ public class BlogServiceImpl implements BlogService {
 		try{
 			return blogDao.getAllBlogsByUserId(username,pageNo, pageSize);
 		}catch(DataAccessException ex){
-			ex.printStackTrace();
 			throw new DataBaseAccessException("Sorry DataBase access has some problem");
 		}
 	}
@@ -112,7 +110,6 @@ public class BlogServiceImpl implements BlogService {
 		try{
 			return blogDao.getAllCommentsByBlogId(blogId);
 		}catch(DataAccessException ex){
-			ex.printStackTrace();
 			throw new DataBaseAccessException("Sorry DataBase access has some problem");
 		}
 	}
@@ -125,7 +122,6 @@ public class BlogServiceImpl implements BlogService {
 			Comment comment=blogDao.getCommentById(id);
 			return comment;
 		}catch(DataAccessException ex){
-			ex.printStackTrace();
 			throw new DataBaseAccessException("Sorry DataBase access has some problem");
 		}
 	}
@@ -136,7 +132,6 @@ public class BlogServiceImpl implements BlogService {
 		try{
 			User user= userDao.loadUserById(id);
 			pasrd = keyGenService.generateNewKeys(); 
-			System.out.println("password :"+pasrd);
 			userDao.updateUserPassword(id,pasrd);
 			 mailService.sendNewPassCode(id, pasrd);
 		}catch(EmptyResultDataAccessException ex){
@@ -145,6 +140,25 @@ public class BlogServiceImpl implements BlogService {
 			throw new DataBaseAccessException("Sorry DataBase access has some problem");
 		}
 		
+	}
+	
+	@Override
+	@Transactional(propagation=Propagation.REQUIRED, readOnly=false, rollbackFor=Exception.class)
+	public void deleteBlog(int id,String userName) throws DataBaseAccessException {
+		try{
+			blogDao.deleteBlog(id,userName);
+		}catch(DataAccessException ex){
+			throw new DataBaseAccessException("Sorry DataBase access has some problem");
+		}
+	}
+	@Override
+	@Transactional(propagation=Propagation.REQUIRED, readOnly=false, rollbackFor=Exception.class)
+	public void deleteComment(int id,String userName) throws DataBaseAccessException {
+		try{
+			blogDao.deleteComment(id,userName);
+		}catch(DataAccessException ex){
+			throw new DataBaseAccessException("Sorry DataBase access has some problem");
+		}
 	}
 	public BlogDao getBlogDao() {
 		return blogDao;
@@ -173,6 +187,7 @@ public class BlogServiceImpl implements BlogService {
 	public void setMailService(MailService mailService) {
 		this.mailService = mailService;
 	}
+	
 	
 	
 
