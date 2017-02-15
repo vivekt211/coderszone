@@ -12,7 +12,4 @@
 	<import resource="database/spring-datasource.xml"/>
 	 <import resource="app/spring-security.xml"/> 
 	<import resource="spring-jdbc/springdao-admin.xml"/>
-	<import resource="app/quartz-context.xml"/>	 
-	<!-- <import resource="app/spring-security.xml"/>
-	<import resource="app/batch-jobs.xml"/>-->	
 </beans>
